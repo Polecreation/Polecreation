@@ -1090,14 +1090,13 @@
       confirmation.style.display = "none";
 
       try {
-        const response = await fetch(`${SUPABASE_REST_URL}/probetraining_leads`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "apikey": SUPABASE_PUBLISHABLE_KEY,
-            "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
-            "Prefer": "return=minimal"
-          },
+        1092: const response = await fetch(`${SUPABASE_REST_URL}/probetraining_leads`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+     "apikey": SUPABASE_PUBLISHABLE_KEY,
+    "Prefer": "return=minimal"
+  },
           body: JSON.stringify(lead)
         });
 
