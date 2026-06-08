@@ -1,0 +1,1084 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PoleCreation Kempten | Probetraining</title>
+  <meta name="description" content="Poledance Probetraining in Kempten. Für Anfänger:innen geeignet. 60 Minuten für nur 15 EUR.">
+  <style>
+    :root {
+      --ink: #24151c;
+      --muted: #6d5b64;
+      --soft: #fff6f8;
+      --cream: #fffaf4;
+      --rose: #e6507f;
+      --rose-dark: #b92c5d;
+      --berry: #6f2447;
+      --line: #ead8de;
+      --white: #ffffff;
+      --shadow: 0 24px 70px rgba(72, 20, 44, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .site-shell {
+      overflow: hidden;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px clamp(18px, 5vw, 72px);
+      background: rgba(255, 250, 244, 0.88);
+      border-bottom: 1px solid rgba(234, 216, 222, 0.8);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: #050505;
+      border-radius: 50%;
+      box-shadow: 0 10px 26px rgba(36, 21, 28, 0.18);
+    }
+
+    .brand-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .ghost-link {
+      color: var(--berry);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .btn {
+      min-height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 8px;
+      color: var(--white);
+      background: linear-gradient(135deg, var(--rose), var(--rose-dark));
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 14px 30px rgba(185, 44, 93, 0.22);
+      transition: transform 160ms ease, box-shadow 160ms ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 34px rgba(185, 44, 93, 0.28);
+    }
+
+    .btn.secondary {
+      color: var(--berry);
+      background: var(--white);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .btn.instagram {
+      color: var(--berry);
+      background: var(--white);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 24px rgba(72, 20, 44, 0.08);
+    }
+
+    .hero {
+      position: relative;
+      min-height: calc(100vh - 76px);
+      display: grid;
+      align-items: center;
+      padding: clamp(32px, 6vw, 74px) clamp(18px, 5vw, 72px) 42px;
+      background:
+        linear-gradient(105deg, rgba(36, 21, 28, 0.88), rgba(111, 36, 71, 0.62) 47%, rgba(255, 246, 248, 0.12)),
+        url("assets/polecreation-gruppe.jpg") center/cover;
+      color: var(--white);
+    }
+
+    .hero-inner {
+      width: min(1180px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 1.04fr) minmax(320px, 0.78fr);
+      align-items: center;
+      gap: clamp(28px, 5vw, 72px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      margin-bottom: 18px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .hero h1 {
+      max-width: 760px;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(46px, 7.2vw, 92px);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 650px;
+      margin: 22px 0 0;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: clamp(18px, 2vw, 22px);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .hero-note {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(150px, 1fr));
+      max-width: 680px;
+      gap: 10px;
+      margin-top: 28px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .hero-note li {
+      min-height: 74px;
+      display: grid;
+      align-content: center;
+      padding: 13px 14px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-weight: 800;
+    }
+
+    .hero-note strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.15;
+    }
+
+    .hero-note small {
+      display: block;
+      margin-top: 4px;
+      color: rgba(255, 255, 255, 0.74);
+      font-size: 12px;
+      font-weight: 750;
+      text-transform: uppercase;
+    }
+
+    .video-card {
+      overflow: hidden;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .video-frame {
+      position: relative;
+      min-height: 390px;
+      background: #120b0f;
+    }
+
+    .video-frame video {
+      width: 100%;
+      height: 100%;
+      min-height: 390px;
+      display: block;
+      object-fit: cover;
+    }
+
+    .video-placeholder {
+      min-height: 390px;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+      color: rgba(255, 255, 255, 0.86);
+      text-align: center;
+      font-weight: 800;
+      background:
+        linear-gradient(rgba(36, 21, 28, 0.18), rgba(36, 21, 28, 0.56)),
+        url("assets/polecreation-einzelperson.jpg") center/cover;
+    }
+
+    .video-caption {
+      padding: 18px 20px 20px;
+      background: rgba(36, 21, 28, 0.5);
+    }
+
+    .video-caption strong {
+      display: block;
+      font-size: 17px;
+    }
+
+    .video-caption span {
+      display: block;
+      margin-top: 4px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 14px;
+    }
+
+    .section {
+      padding: clamp(54px, 7vw, 90px) clamp(18px, 5vw, 72px);
+    }
+
+    .section-inner {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+    }
+
+    .section-title {
+      max-width: 760px;
+      margin: 0 0 26px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(32px, 4.6vw, 58px);
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .section-lead {
+      max-width: 710px;
+      margin: -10px 0 34px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .fact-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .fact {
+      min-height: 150px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 12px 34px rgba(72, 20, 44, 0.06);
+    }
+
+    .fact small {
+      color: var(--rose-dark);
+      font-weight: 900;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .fact strong {
+      display: block;
+      margin-top: 10px;
+      font-size: 24px;
+      line-height: 1.15;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(28px, 5vw, 70px);
+      align-items: center;
+    }
+
+    .soft-band {
+      background: var(--soft);
+    }
+
+    .portrait {
+      min-height: 520px;
+      border-radius: 8px;
+      background:
+        linear-gradient(rgba(36, 21, 28, 0.02), rgba(36, 21, 28, 0.2)),
+        url("assets/polecreation-einzelperson.jpg") center/cover;
+      box-shadow: var(--shadow);
+    }
+
+    .reasons {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .reason {
+      padding: 18px 18px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.74);
+    }
+
+    .reason strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--berry);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      counter-reset: steps;
+    }
+
+    .gear-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .gear {
+      min-height: 168px;
+      padding: 24px;
+      border-radius: 8px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 34px rgba(72, 20, 44, 0.06);
+    }
+
+    .gear strong {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--berry);
+      font-size: 21px;
+      line-height: 1.15;
+    }
+
+    .gear span {
+      color: var(--muted);
+    }
+
+    .step {
+      position: relative;
+      min-height: 190px;
+      padding: 24px;
+      border-radius: 8px;
+      color: var(--white);
+      background: var(--ink);
+      overflow: hidden;
+    }
+
+    .step::before {
+      counter-increment: steps;
+      content: "0" counter(steps);
+      display: block;
+      margin-bottom: 28px;
+      color: #ff9db8;
+      font-weight: 900;
+    }
+
+    .step strong {
+      display: block;
+      font-size: 21px;
+      line-height: 1.15;
+    }
+
+    .step span {
+      display: block;
+      margin-top: 10px;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 15px;
+    }
+
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .quote {
+      padding: 24px;
+      border-radius: 8px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      box-shadow: 0 12px 34px rgba(72, 20, 44, 0.06);
+    }
+
+    .quote p {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .quote strong {
+      display: block;
+      margin-top: 18px;
+      color: var(--berry);
+    }
+
+    .booking {
+      background: linear-gradient(180deg, var(--cream), #f8e8ee);
+    }
+
+    .booking-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(340px, 1fr);
+      gap: clamp(24px, 5vw, 70px);
+      align-items: start;
+    }
+
+    .booking-panel {
+      padding: clamp(22px, 4vw, 34px);
+      border-radius: 8px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .included {
+      display: grid;
+      gap: 12px;
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .included li {
+      display: flex;
+      gap: 10px;
+      color: var(--muted);
+    }
+
+    .included li::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      flex: 0 0 10px;
+      margin-top: 8px;
+      border-radius: 50%;
+      background: var(--rose);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--berry);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 13px;
+      border: 1px solid #e3cdd5;
+      border-radius: 8px;
+      background: #fffcfb;
+      color: var(--ink);
+      outline: none;
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 4px rgba(230, 80, 127, 0.13);
+    }
+
+    .choice-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .choice {
+      position: relative;
+    }
+
+    .choice input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .choice span {
+      min-height: 64px;
+      display: grid;
+      align-content: center;
+      padding: 12px 14px;
+      border: 1px solid #e3cdd5;
+      border-radius: 8px;
+      background: #fffcfb;
+      color: var(--ink);
+      font-weight: 850;
+    }
+
+    .choice small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .choice input:checked + span {
+      border-color: var(--rose);
+      background: #fff0f5;
+      box-shadow: 0 0 0 4px rgba(230, 80, 127, 0.11);
+    }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .check input {
+      width: 18px;
+      min-width: 18px;
+      height: 18px;
+      min-height: 18px;
+      margin-top: 2px;
+      accent-color: var(--rose);
+    }
+
+    .form-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .form-actions .btn {
+      width: 100%;
+    }
+
+    .fineprint {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .confirmation {
+      display: none;
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid #b8e6c6;
+      border-radius: 8px;
+      background: #f0fff5;
+      color: #215a32;
+      font-weight: 750;
+    }
+
+    .footer {
+      padding: 34px clamp(18px, 5vw, 72px);
+      color: rgba(255, 255, 255, 0.76);
+      background: var(--ink);
+    }
+
+    .footer-inner {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .mobile-cta {
+      display: none;
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      z-index: 30;
+    }
+
+    .mobile-cta .btn {
+      width: 100%;
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        min-height: auto;
+      }
+
+      .hero-inner,
+      .split,
+      .booking-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .video-card {
+        max-width: 620px;
+      }
+
+      .fact-grid,
+      .steps,
+      .testimonials,
+      .gear-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .portrait {
+        min-height: 360px;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .topbar {
+        padding: 12px 14px;
+      }
+
+      .brand-copy span,
+      .ghost-link {
+        display: none;
+      }
+
+      .nav-actions .btn {
+        min-height: 38px;
+        padding: 0 10px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding: 34px 16px 32px;
+      }
+
+      .hero h1 {
+        font-size: clamp(42px, 13vw, 58px);
+      }
+
+      .hero-copy {
+        font-size: 17px;
+      }
+
+      .hero-actions {
+        gap: 8px;
+        margin-top: 22px;
+      }
+
+      .btn {
+        min-height: 40px;
+        padding: 0 13px;
+        font-size: 13px;
+      }
+
+      .hero-actions .btn {
+        flex: 1 1 100%;
+      }
+
+      .hero-note {
+        margin-top: 18px;
+      }
+
+      .hero-note li {
+        min-height: 58px;
+        padding: 10px 12px;
+      }
+
+      .hero-note strong {
+        font-size: 16px;
+      }
+
+      .hero-note small {
+        font-size: 11px;
+      }
+
+      .video-frame {
+        min-height: 270px;
+      }
+
+      .video-frame video {
+        min-height: 270px;
+      }
+
+      .video-placeholder {
+        min-height: 270px;
+      }
+
+      .section {
+        padding: 48px 16px;
+      }
+
+      .fact-grid,
+      .steps,
+      .testimonials,
+      .gear-grid,
+      .form-grid,
+      .choice-row {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-note {
+        grid-template-columns: 1fr;
+      }
+
+      .booking-panel {
+        padding: 18px;
+      }
+
+      input,
+      select,
+      textarea {
+        min-height: 42px;
+        padding: 10px 11px;
+      }
+
+      .form-actions {
+        margin-top: 14px;
+      }
+
+      .form-actions .btn,
+      .mobile-cta .btn {
+        min-height: 42px;
+      }
+
+      .mobile-cta {
+        display: block;
+      }
+
+      .footer {
+        padding-bottom: 86px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar" aria-label="Seitennavigation">
+      <a class="brand" href="#top" aria-label="PoleCreation Start">
+        <span class="brand-mark">
+          <img src="assets/polecreation-logo.png" alt="PoleCreation Logo">
+        </span>
+      </a>
+      <nav class="nav-actions" aria-label="Aktionen">
+        <a class="ghost-link" href="#ablauf">Ablauf</a>
+        <a class="btn" href="#buchen">Termin buchen</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-inner">
+          <div>
+            <div class="eyebrow">Probetraining für Anfänger:innen</div>
+            <h1>Poledance Probetraining in Kempten.</h1>
+            <p class="hero-copy">Lerne PoleCreation mit Anja Herz in einer entspannten Probestunde kennen. Ohne Vorerfahrung, ohne Leistungsdruck und mit genug Zeit für deine ersten Erfolgsmomente an der Pole.</p>
+            <div class="hero-actions">
+              <a class="btn" href="#buchen">Sichere dir dein Probetraining.</a>
+              <a class="btn secondary" href="#fakten">Was dich erwartet</a>
+            </div>
+            <ul class="hero-note" aria-label="Kurzfakten">
+              <li><strong>60 Minuten Probetraining</strong></li>
+              <li><strong>Nur 15 EUR</strong><small>für dein erstes Probetraining</small></li>
+              <li><strong>Für Anfänger:innen</strong><small>keine Erfahrung nötig</small></li>
+            </ul>
+          </div>
+
+          <aside class="video-card" aria-label="Willkommensvideo">
+            <div class="video-frame">
+              <div class="video-placeholder">Video wird nach dem Backend-Setup eingebunden.</div>
+            </div>
+            <div class="video-caption">
+              <strong>Willkommen bei PoleCreation</strong>
+              <span>Anjas persönliches Willkommen für dein Probetraining.</span>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section" id="fakten">
+        <div class="section-inner">
+          <h2 class="section-title">Alles Wichtige auf einen Blick.</h2>
+          <p class="section-lead">Hier ist dein Safespace: keine Vorurteile, kein Leistungsdruck und jede:r ist willkommen. Du brauchst keine Erfahrung, nur Neugier auf dein erstes Probetraining.</p>
+          <div class="fact-grid">
+            <article class="fact">
+              <small>Dauer</small>
+              <strong>60 Minuten Probetraining</strong>
+            </article>
+            <article class="fact">
+              <small>Preis</small>
+              <strong>Nur 15 EUR</strong>
+            </article>
+            <article class="fact">
+              <small>Level</small>
+              <strong>Für Anfänger:innen</strong>
+            </article>
+            <article class="fact">
+              <small>Gefühl</small>
+              <strong>Safe Space ohne Vorurteile</strong>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section soft-band">
+        <div class="section-inner split">
+          <div class="portrait" role="img" aria-label="Trainingsatmosphäre im Pole-Studio"></div>
+          <div>
+            <h2 class="section-title">Du musst nicht stark, gelenkig oder mutig sein.</h2>
+            <p class="section-lead">Genau dafür ist das Probetraining da. Du kommst an, lernst das Studio kennen und probierst in Ruhe aus, ob Poledance zu dir passt.</p>
+            <div class="reasons">
+              <div class="reason">
+                <strong>Wenn du dich unsicher fühlst</strong>
+                Du wirst Schritt für Schritt angeleitet. Niemand erwartet, dass du vorher etwas kannst.
+              </div>
+              <div class="reason">
+                <strong>Wenn du denkst, dir fehlt Kraft</strong>
+                Kraft entsteht im Training. Für die erste Stunde reichen Neugier und bequeme Kleidung. Optional ist kurze Sportkleidung besser für den Grip an der Stange.
+              </div>
+              <div class="reason">
+                <strong>Wenn du alleine kommst</strong>
+                Viele buchen ihr erstes Probetraining alleine. Die Gruppe ist offen und freundlich.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="mitbringen">
+        <div class="section-inner">
+          <h2 class="section-title">Was brauchst du fürs Probetraining?</h2>
+          <p class="section-lead">Pack nur das ein, womit du dich wohlfühlst. Für die ersten Moves zählt vor allem, dass du dich gut bewegen kannst.</p>
+          <div class="gear-grid">
+            <article class="gear">
+              <strong>Bequeme Kleidung</strong>
+              <span>Lange, bequeme Kleidung ist völlig okay. Kurze Sportkleidung wäre besser, weil Haut mehr Grip an der Stange gibt.</span>
+            </article>
+            <article class="gear">
+              <strong>Handtuch</strong>
+              <span>Ein kleines Handtuch reicht aus und hilft dir während des Trainings.</span>
+            </article>
+            <article class="gear">
+              <strong>Trinkflasche</strong>
+              <span>Nimm dir Wasser mit, damit du zwischen Warm-up, Basics und Cooldown entspannt trinken kannst.</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="ablauf">
+        <div class="section-inner">
+          <h2 class="section-title">So läuft dein Probetraining ab.</h2>
+          <div class="steps">
+            <article class="step">
+              <strong>Ankommen</strong>
+              <span>Du lernst das Studio kennen und kannst in Ruhe Fragen stellen.</span>
+            </article>
+            <article class="step">
+              <strong>Warm-up</strong>
+              <span>Gemeinsam bereiten wir Schultern, Core und Beine sanft vor.</span>
+            </article>
+            <article class="step">
+              <strong>Erste Basics</strong>
+              <span>Du probierst einfache Spins, Haltepositionen und Bewegungen an der Pole.</span>
+            </article>
+            <article class="step">
+              <strong>Nächster Schritt</strong>
+              <span>Wenn es dir gefällt, zeigen wir dir, welcher Kurs danach zu dir passt.</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section soft-band">
+        <div class="section-inner">
+          <h2 class="section-title">Was Teilnehmer:innen danach sagen.</h2>
+          <p class="section-lead">So fühlt sich der erste Schritt bei PoleCreation an: herzlich, stärkend und viel leichter, als viele vorher denken.</p>
+          <div class="testimonials">
+            <article class="quote">
+              <p>“Ich hatte vorher wirklich Respekt, aber die Stunde war super herzlich und viel entspannter als gedacht.”</p>
+              <strong>Leonie, 31 Jahre</strong>
+            </article>
+            <article class="quote">
+              <p>“Schon nach der ersten Stunde hatte ich das Gefühl, etwas Neues geschafft zu haben.”</p>
+              <strong>Martina, 45 Jahre</strong>
+            </article>
+            <article class="quote">
+              <p>“Keine komische Stimmung, kein Druck. Genau das hat mir geholfen, mich zu trauen.”</p>
+              <strong>Steffi, 22 Jahre</strong>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section booking" id="buchen">
+        <div class="section-inner booking-layout">
+          <div>
+            <h2 class="section-title">Reserviere deinen Platz im Probetraining.</h2>
+            <p class="section-lead">Wähle dein passendes Probetraining. Die 15 EUR bezahlst du einfach vor Ort.</p>
+            <ul class="included">
+              <li>Bestätigung per Whatsapp.</li>
+              <li>Erinnerung 24 Stunden vorher, damit der Termin nicht untergeht.</li>
+              <li>Bitte sage rechtzeitig ab, damit jemand anderes die Chance für ein Probetraining bekommt.</li>
+            </ul>
+            <div class="hero-actions">
+              <a class="btn instagram" href="https://www.instagram.com/polecreation.studio/" target="_blank" rel="noopener">Folge uns auf Instagram</a>
+            </div>
+          </div>
+
+          <form class="booking-panel booking-form" id="bookingForm">
+            <div class="form-grid">
+              <div class="field">
+                <label for="firstName">Vorname</label>
+                <input id="firstName" name="firstName" autocomplete="given-name" required>
+              </div>
+              <div class="field">
+                <label for="lastName">Nachname</label>
+                <input id="lastName" name="lastName" autocomplete="family-name" required>
+              </div>
+              <div class="field">
+                <label for="email">E-Mail</label>
+                <input id="email" name="email" type="email" autocomplete="email" required>
+              </div>
+              <div class="field">
+                <label for="birthdate">Geburtsdatum</label>
+                <input id="birthdate" name="birthdate" type="date" required>
+              </div>
+              <div class="field">
+                <label for="phone">Telefonnummer</label>
+                <input id="phone" name="phone" type="tel" autocomplete="tel" required>
+              </div>
+              <div class="field full">
+                <label for="appointment">Wunschtermin</label>
+                <select id="appointment" name="appointment" required>
+                  <option value="">Bitte auswählen</option>
+                  <option value="Donnerstag, 18.06.2026 - 19:00 Uhr">Donnerstag, 18.06.2026 - 19:00 Uhr</option>
+                  <option value="Dienstag, 23.06.2026 - 17:00 Uhr">Dienstag, 23.06.2026 - 17:00 Uhr</option>
+                </select>
+              </div>
+              <label class="check field full">
+                <input type="checkbox" name="whatsappConsent" required>
+                <span>Ich bin einverstanden, dass PoleCreation mich per Whatsapp zu meinem Probetraining kontaktiert.</span>
+              </label>
+            </div>
+            <div class="form-actions">
+              <button class="btn" type="submit">Platz verbindlich anfragen</button>
+            </div>
+            <p class="fineprint">Vorschau: In der fertigen Version werden die Daten sicher gespeichert und automatisch an Anja weitergeleitet.</p>
+            <div class="confirmation" id="confirmation">
+              Danke! In der echten Version würde jetzt automatisch eine Terminbestätigung per Whatsapp versendet.
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span>
+          Filiale PoleCreation, Schelldorferstraße 1, 87437 Kempten<br>
+          Firmensitz PoleCreation, Anja Herz, Im Schlattes 21, 87496 Untrasried
+        </span>
+        <span>
+          polecreationstudio@gmail.com<br>
+          Telefon: 0175 8933490<br>
+          USt-IdNr.: DE359561561<br>
+          Instagram: @polecreation.studio
+        </span>
+      </div>
+    </footer>
+
+    <div class="mobile-cta">
+      <a class="btn" href="#buchen">Probetraining buchen</a>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll(".booking-form").forEach((form) => {
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const confirmation = form.querySelector(".confirmation");
+        const data = Object.fromEntries(new FormData(form));
+        const existing = JSON.parse(localStorage.getItem("polecreationDemoLeads") || "[]");
+        existing.push({ ...data, createdAt: new Date().toISOString() });
+        localStorage.setItem("polecreationDemoLeads", JSON.stringify(existing));
+
+        confirmation.style.display = "block";
+        confirmation.textContent = `Danke ${data.firstName || ""}! Deine Anfrage für ${data.appointment} wurde in dieser Vorschau simuliert.`;
+        form.reset();
+        confirmation.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    });
+  </script>
+</body>
+</html>
