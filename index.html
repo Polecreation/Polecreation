@@ -1066,68 +1066,69 @@
   </div>
 
   <script>
-  const SUPABASE_REST_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/rest/v1";
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_KXNvsTotuvo0kxhqGc4HKA_Pu5QH3lT";
+    const SUPABASE_REST_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/rest/v1";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_KXNvsTotuvo0kxhqGc4HKA_Pu5QH3lT";
 
-  document.querySelectorAll(".booking-form").forEach((form) => {
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
+    document.querySelectorAll(".booking-form").forEach((form) => {
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
 
-      const confirmation = form.querySelector(".confirmation");
-      const submitButton = form.querySelector('button[type="submit"]');
-      const data = Object.fromEntries(new FormData(form));
+        const confirmation = form.querySelector(".confirmation");
+        const submitButton = form.querySelector('button[type="submit"]');
+        const data = Object.fromEntries(new FormData(form));
 
-      const lead = {
-        first_name: data.firstName,
-        last_name: data.lastName,
-        email: data.email,
-        birthdate: data.birthdate,
-        phone: data.phone,
-        appointment: data.appointment,
-        whatsapp_consent: data.whatsappConsent === "on",
-        source: "landingpage"
-      };
+        const lead = {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          email: data.email,
+          birthdate: data.birthdate,
+          phone: data.phone,
+          appointment: data.appointment,
+          whatsapp_consent: data.whatsappConsent === "on",
+          source: "landingpage"
+        };
 
-      submitButton.disabled = true;
-      submitButton.textContent = "Wird gesendet...";
-      confirmation.style.display = "none";
+        submitButton.disabled = true;
+        submitButton.textContent = "Wird gesendet...";
+        confirmation.style.display = "none";
 
-      try {
-       const response = await fetch(`${SUPABASE_REST_URL}/probetraining_leads`, {
-  method: "POST",
- headers: {
-    "Content-Type": "application/json",
-     "apikey": SUPABASE_PUBLISHABLE_KEY,
-     "Authorization": SUPABASE_PUBLISHABLE_KEY,
-     "Prefer": "return=minimal"
-   },
-          body: JSON.stringify(lead)
-        });
+        try {
+          const response = await fetch(`${SUPABASE_REST_URL}/probetraining_leads`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": SUPABASE_PUBLISHABLE_KEY,
+              "Authorization": SUPABASE_PUBLISHABLE_KEY,
+              "Prefer": "return=minimal"
+            },
+            body: JSON.stringify(lead)
+          });
 
-        if (!response.ok) {
-          throw new Error("Die Anfrage konnte nicht gespeichert werden.");
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || `HTTP ${response.status}`);
+          }
+
+          confirmation.style.display = "block";
+          confirmation.style.borderColor = "#b8e6c6";
+          confirmation.style.background = "#f0fff5";
+          confirmation.style.color = "#215a32";
+          confirmation.textContent = `Danke ${data.firstName || ""}! Deine Anfrage für ${data.appointment} ist eingegangen. PoleCreation meldet sich per Whatsapp bei dir.`;
+
+          form.reset();
+          confirmation.scrollIntoView({ behavior: "smooth", block: "center" });
+        } catch (error) {
+          confirmation.style.display = "block";
+          confirmation.style.borderColor = "#f2b8b5";
+          confirmation.style.background = "#fff1f0";
+          confirmation.style.color = "#8c1d18";
+          confirmation.textContent = `Die Anfrage konnte gerade nicht gesendet werden. Fehler: ${error.message}`;
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = "Platz verbindlich anfragen";
         }
-
-        confirmation.style.display = "block";
-        confirmation.style.borderColor = "#b8e6c6";
-        confirmation.style.background = "#f0fff5";
-        confirmation.style.color = "#215a32";
-        confirmation.textContent = `Die Anfrage konnte gerade nicht gesendet werden. Fehler: ${error.message}`;
-
-        form.reset();
-        confirmation.scrollIntoView({ behavior: "smooth", block: "center" });
-      } catch (error) {
-        confirmation.style.display = "block";
-        confirmation.style.borderColor = "#f2b8b5";
-        confirmation.style.background = "#fff1f0";
-        confirmation.style.color = "#8c1d18";
-        confirmation.textContent = "Die Anfrage konnte gerade nicht gesendet werden. Bitte versuche es gleich nochmal.";
-      } finally {
-        submitButton.disabled = false;
-        submitButton.textContent = "Platz verbindlich anfragen";
-      }
+      });
     });
-  });
-</script>
+  </script>
 </body>
 </html>
