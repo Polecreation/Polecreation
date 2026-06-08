@@ -23,6 +23,32 @@ const requiredEnv = (name: string) => {
   return value;
 };
 
+const getSupabaseSecretKey = () => {
+  const legacyServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (legacyServiceRoleKey) {
+    return legacyServiceRoleKey;
+  }
+
+  const secretKeys = Deno.env.get("SUPABASE_SECRET_KEYS");
+  if (!secretKeys) {
+    throw new Error("Missing environment variable: SUPABASE_SERVICE_ROLE_KEY or SUPABASE_SECRET_KEYS");
+  }
+
+  try {
+    const parsed = JSON.parse(secretKeys);
+    const firstKey = parsed.default || Object.values(parsed)[0];
+    if (typeof firstKey === "string" && firstKey.length > 0) {
+      return firstKey;
+    }
+  } catch (_error) {
+    if (secretKeys.startsWith("sb_secret_")) {
+      return secretKeys;
+    }
+  }
+
+  throw new Error("Could not read Supabase secret key");
+};
+
 const escapeHtml = (value: string) =>
   value
     .replaceAll("&", "&amp;")
@@ -102,7 +128,7 @@ Deno.serve(async (request) => {
 
   try {
     const supabaseUrl = requiredEnv("SUPABASE_URL");
-    const serviceRoleKey = requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
+    const serviceRoleKey = getSupabaseSecretKey();
     const resendApiKey = requiredEnv("RESEND_API_KEY");
     const fromEmail = requiredEnv("FROM_EMAIL");
     const adminEmail = requiredEnv("ADMIN_EMAIL");
