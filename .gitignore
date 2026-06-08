@@ -1,0 +1,7 @@
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+polecreation-netlify-upload.zip
+netlify-upload/
