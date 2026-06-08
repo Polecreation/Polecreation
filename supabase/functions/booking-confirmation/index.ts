@@ -179,41 +179,42 @@ Deno.serve(async (request) => {
       to: lead.email.trim(),
       subject: "Dein Probetraining bei PoleCreation ist bestätigt",
       html: `
-        <p>Hallo ${firstName},</p>
-        <p>schön, dass du dein Probetraining bei PoleCreation gebucht hast. Wir haben deinen Platz verbindlich für dich angefragt.</p>
+        <p>Hallo ${firstName}, 💕</p>
 
-        <p><strong>Dein Termin:</strong><br>${appointment}</p>
+        <p>schön, dass du dein Probetraining bei PoleCreation gebucht hast. Endlich deine Chance für eine neue Leidenschaft und mehr Körperbewusstsein! Wir freuen uns riesig darauf, dir unsere wundervolle Sportart Poledance näherzubringen. 🩷</p>
 
-        <h2>Was dich erwartet</h2>
-        <p>
-          💰 <strong>Kosten:</strong> 15 € pro Person<br>
-          💳 <strong>Bezahlung:</strong> Bar vor Ort oder mit Karte<br>
-          👗 <strong>Bitte mitbringen:</strong> Kurze Sportkleidung, ein Getränk &amp; ein Handtuch
-        </p>
+        <p>📅 <strong>Dein Termin</strong><br>${appointment}</p>
 
-        <h2>Unser Studio</h2>
-        <p>
-          📍 Seit dem 01. Februar begrüßen wir dich in unserem neuen Premium Studio:<br>
-          Schelldorferstraße 1, 87437 Kempten (Allgäu)
-        </p>
+        <p>📍 <strong>Unser Studio</strong><br>
+        PoleCreation<br>
+        Schelldorferstraße 1<br>
+        87437 Kempten (Allgäu)</p>
 
-        <p>
-          🅿️ <strong>Parken:</strong> Direkt vor dem Studio sind leider keine Kundenparkplätze vorhanden.<br>
-          Du kannst bequem hier parken: Im Oberösch, Kempten – nur 3 Minuten Fußweg.<br>
-          Es handelt sich dabei um einen kostenlosen öffentlichen Parkplatz vor der Firma BSG Allgäu.
-        </p>
+        <p>🅿️ <strong>Parken</strong><br>
+        Direkt vor dem Studio stehen leider keine Kundenparkplätze zur Verfügung. Du kannst bequem auf dem kostenlosen öffentlichen Parkplatz „Im Oberösch“ vor der Firma BSG Allgäu parken. Von dort sind es nur etwa 3 Minuten zu Fuß bis zum Studio.</p>
 
-        <h2>Absagen &amp; Änderungen</h2>
-        <p>
-          Falls du kurzfristig verhindert bist, bitten wir dich herzlich, uns 1–2 Tage im Voraus Bescheid zu geben,
-          damit wir deinen Platz an eine andere Polerina weitergeben können. Vielen Dank! 🙏
-        </p>
+        <p>💰 <strong>Kosten</strong><br>15 € pro Person</p>
 
-        <p>Bei weiteren Fragen sind wir jederzeit für dich da! ☀️</p>
+        <p>💳 <strong>Bezahlung</strong><br>Bar vor Ort oder mit Karte</p>
 
-        <p>Wir freuen uns riesig darauf, dich bald in unserem Studio willkommen zu heißen und gemeinsam mit dir durchzustarten! 💪💕</p>
+        <p>👗 <strong>Bitte mitbringen</strong></p>
+        <ul>
+          <li>Bequeme Sportkleidung</li>
+          <li>Wenn möglich kurze Sportkleidung für besseren Grip</li>
+          <li>Handtuch</li>
+          <li>Trinkflasche</li>
+        </ul>
 
-        <p>Ganz liebe Grüße,<br>Anja &amp; das Team von PoleCreation</p>
+        <p>🔔 <strong>Absagen &amp; Änderungen</strong><br>
+        Falls du verhindert sein solltest, gib uns bitte möglichst 1–2 Tage vorher Bescheid, damit wir deinen Platz an eine andere Polerina weitergeben können. Vielen Dank für dein Verständnis. 🙏</p>
+
+        <p>Bei Fragen sind wir jederzeit gerne für dich da.</p>
+
+        <p>Wir freuen uns darauf, dich bald in unserem Studio willkommen zu heißen und gemeinsam mit dir durchzustarten! 💪💕</p>
+
+        <p>Ganz liebe Grüße</p>
+
+        <p>Anja &amp; das Team von PoleCreation</p>
       `,
       replyTo: adminEmail
     });
