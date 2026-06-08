@@ -180,19 +180,40 @@ Deno.serve(async (request) => {
       subject: "Dein Probetraining bei PoleCreation ist bestätigt",
       html: `
         <p>Hallo ${firstName},</p>
-        <p>schön, dass du dein Probetraining bei PoleCreation gebucht hast.</p>
+        <p>schön, dass du dein Probetraining bei PoleCreation gebucht hast. Wir haben deinen Platz verbindlich für dich angefragt.</p>
+
         <p><strong>Dein Termin:</strong><br>${appointment}</p>
-        <p><strong>Ort:</strong><br>PoleCreation<br>Schelldorferstraße 1<br>87437 Kempten</p>
-        <p><strong>Preis:</strong><br>15 EUR, zahlbar vor Ort</p>
-        <p><strong>Bitte bring mit:</strong></p>
-        <ul>
-          <li>bequeme Kleidung</li>
-          <li>wenn möglich kurze Sportkleidung für besseren Grip</li>
-          <li>Handtuch</li>
-          <li>Trinkflasche</li>
-        </ul>
-        <p>Wenn du nicht kommen kannst, sag bitte rechtzeitig ab, damit jemand anderes den Platz nutzen kann.</p>
-        <p>Wir freuen uns auf dich!<br>Dein PoleCreation Team</p>
+
+        <h2>Was dich erwartet</h2>
+        <p>
+          💰 <strong>Kosten:</strong> 15 € pro Person<br>
+          💳 <strong>Bezahlung:</strong> Bar vor Ort oder mit Karte<br>
+          👗 <strong>Bitte mitbringen:</strong> Kurze Sportkleidung, ein Getränk &amp; ein Handtuch
+        </p>
+
+        <h2>Unser Studio</h2>
+        <p>
+          📍 Seit dem 01. Februar begrüßen wir dich in unserem neuen Premium Studio:<br>
+          Schelldorferstraße 1, 87437 Kempten (Allgäu)
+        </p>
+
+        <p>
+          🅿️ <strong>Parken:</strong> Direkt vor dem Studio sind leider keine Kundenparkplätze vorhanden.<br>
+          Du kannst bequem hier parken: Im Oberösch, Kempten – nur 3 Minuten Fußweg.<br>
+          Es handelt sich dabei um einen kostenlosen öffentlichen Parkplatz vor der Firma BSG Allgäu.
+        </p>
+
+        <h2>Absagen &amp; Änderungen</h2>
+        <p>
+          Falls du kurzfristig verhindert bist, bitten wir dich herzlich, uns 1–2 Tage im Voraus Bescheid zu geben,
+          damit wir deinen Platz an eine andere Polerina weitergeben können. Vielen Dank! 🙏
+        </p>
+
+        <p>Bei weiteren Fragen sind wir jederzeit für dich da! ☀️</p>
+
+        <p>Wir freuen uns riesig darauf, dich bald in unserem Studio willkommen zu heißen und gemeinsam mit dir durchzustarten! 💪💕</p>
+
+        <p>Ganz liebe Grüße,<br>Anja &amp; das Team von PoleCreation</p>
       `,
       replyTo: adminEmail
     });
