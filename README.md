@@ -20,3 +20,18 @@ Das Formular kann später an Supabase angebunden werden:
 2. SQL aus `supabase/schema.sql` ausführen.
 3. Formular in `index.html` mit Supabase URL und anon key verbinden.
 4. Optional Make.com Webhook ergänzen, um WhatsApp-Bestätigungen auszulösen.
+
+## E-Mail-Bestätigung
+
+Die Datei `supabase/functions/booking-confirmation/index.ts` enthält eine Supabase Edge Function.
+Sie speichert neue Probetraining-Anfragen und versendet anschließend E-Mails über Resend.
+
+Benötigte Supabase Secrets:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `RESEND_API_KEY`
+- `FROM_EMAIL`
+- `ADMIN_EMAIL`
+
+Die Function-URL wird in `index.html` über `BOOKING_FUNCTION_URL` aufgerufen.
