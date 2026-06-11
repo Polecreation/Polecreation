@@ -989,7 +989,7 @@
             <h2 class="section-title">Reserviere deinen Platz im Probetraining.</h2>
             <p class="section-lead">Wähle dein passendes Probetraining. Die 15 EUR bezahlst du einfach vor Ort.</p>
             <ul class="included">
-              <li>Bestätigung per Whatsapp.</li>
+              <li>Ausführliche Bestätigung per E-Mail.</li>
               <li>Erinnerung 24 Stunden vorher, damit der Termin nicht untergeht.</li>
               <li>Bitte sage rechtzeitig ab, damit jemand anderes die Chance für ein Probetraining bekommt.</li>
             </ul>
@@ -1030,7 +1030,7 @@
               </div>
               <label class="check field full">
                 <input type="checkbox" name="whatsappConsent" required>
-                <span>Ich bin einverstanden, dass PoleCreation mich per Whatsapp zu meinem Probetraining kontaktiert.</span>
+                <span>Ich bin einverstanden, dass PoleCreation mich per WhatsApp zu meinem Probetraining kontaktiert.</span>
               </label>
             </div>
             <div class="form-actions">
@@ -1038,7 +1038,7 @@
             </div>
             <p class="fineprint">Deine Anfrage wird gespeichert. Du erhältst danach automatisch eine Bestätigung per E-Mail.</p>
             <div class="confirmation" id="confirmation">
-              Danke! In der echten Version würde jetzt automatisch eine Terminbestätigung per Whatsapp versendet.
+              Danke! Deine Anfrage wurde gespeichert. Du erhältst gleich eine Bestätigung per E-Mail.
             </div>
           </form>
         </div>
@@ -1066,7 +1066,7 @@
   </div>
 
   <script>
-    const BOOKING_FUNCTION_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/bright-function";
+    const BOOKING_FUNCTION_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/booking-confirmation";
 
     document.querySelectorAll(".booking-form").forEach((form) => {
       form.addEventListener("submit", async (event) => {
@@ -1100,16 +1100,17 @@
             body: JSON.stringify(lead)
           });
 
+          const result = await response.json().catch(() => ({}));
+
           if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText || `HTTP ${response.status}`);
+            throw new Error(result.message || "Bitte versuche es später erneut.");
           }
 
           confirmation.style.display = "block";
           confirmation.style.borderColor = "#b8e6c6";
           confirmation.style.background = "#f0fff5";
           confirmation.style.color = "#215a32";
-          confirmation.textContent = `Danke ${data.firstName || ""}! Deine Anfrage für ${data.appointment} ist eingegangen. Du erhältst gleich eine Bestätigung per E-Mail.`;
+          confirmation.textContent = result.message || `Danke ${data.firstName || ""}! Deine Anfrage für ${data.appointment} ist eingegangen. Du erhältst gleich eine Bestätigung per E-Mail.`;
 
           form.reset();
           confirmation.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -1118,7 +1119,7 @@
           confirmation.style.borderColor = "#f2b8b5";
           confirmation.style.background = "#fff1f0";
           confirmation.style.color = "#8c1d18";
-          confirmation.textContent = `Die Anfrage konnte gerade nicht gesendet werden. Fehler: ${error.message}`;
+          confirmation.textContent = `Die Anfrage konnte gerade nicht gesendet werden. ${error.message || "Bitte versuche es später erneut oder melde dich direkt bei PoleCreation."}`;
         } finally {
           submitButton.disabled = false;
           submitButton.textContent = "Platz verbindlich anfragen";
