@@ -8,12 +8,12 @@ Statische Landingpage für PoleCreation Kempten mit Video, Terminauswahl und Buc
 - `assets/` enthält Bilder und Logos.
 - `netlify.toml` enthält die statische Netlify-Konfiguration.
 - `supabase/schema.sql` enthält die Tabelle für Probetraining-Anmeldungen.
-- `supabase/functions/booking-confirmation/index.ts` speichert Anfragen und versendet E-Mails über Resend.
+- `supabase/functions/bright-function/index.ts` speichert Anfragen und versendet E-Mails über Resend.
 
 ## Buchungsablauf
 
 1. Der Kunde füllt das Formular in `index.html` aus.
-2. Das Formular sendet die Anfrage an die Supabase Edge Function `booking-confirmation`.
+2. Das Formular sendet die Anfrage an die Supabase Edge Function `bright-function`.
 3. Die Function speichert den Lead in `public.probetraining_leads`.
 4. Der Kunde erhält eine ausführliche Bestätigungs-E-Mail.
 5. PoleCreation erhält eine kurze interne Benachrichtigung mit den Kontaktdaten und dem Termin.
@@ -27,7 +27,7 @@ Wenn der Lead gespeichert wurde, aber der E-Mail-Versand fehlschlägt, bleibt di
 3. Edge Function deployen:
 
    ```bash
-   supabase functions deploy booking-confirmation
+   supabase functions deploy bright-function
    ```
 
 4. In Supabase die folgenden Secrets setzen:
@@ -41,7 +41,7 @@ Wenn der Lead gespeichert wurde, aber der E-Mail-Versand fehlschlägt, bleibt di
 Die Landingpage ruft aktuell diese Function-URL auf:
 
 ```text
-https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/booking-confirmation
+https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/bright-function
 ```
 
 ## Netlify Deployment
