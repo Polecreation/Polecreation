@@ -73,3 +73,4 @@ Für Netlify muss die Subdomain im DNS von Wix/Domainverwaltung von Wix weg auf 
 5. In Netlify warten, bis SSL/HTTPS aktiv ist.
 
 Erst danach sollte die Landingpage offiziell verlinkt oder beworben werden.
+Letzter Deploy-Trigger: 2026-06-29
