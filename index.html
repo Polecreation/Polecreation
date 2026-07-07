@@ -69,17 +69,18 @@
       display: flex;
       align-items: center;
       min-width: 0;
+      pointer-events: none;
     }
 
     .brand-mark {
-      width: min(330px, 42vw);
-      height: 64px;
+      width: min(410px, 48vw);
+      height: 82px;
       display: flex;
       align-items: center;
-      overflow: hidden;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.76);
-      box-shadow: 0 10px 26px rgba(36, 21, 28, 0.1);
+      overflow: visible;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
     }
 
     .brand-mark img {
@@ -662,14 +663,6 @@
       font-size: 14px;
     }
 
-    .footer-logo {
-      width: min(320px, 100%);
-      display: block;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.96);
-    }
-
     .footer h3 {
       margin: 0 0 12px;
       color: var(--white);
@@ -758,8 +751,8 @@
       }
 
       .brand-mark {
-        width: min(224px, 58vw);
-        height: 48px;
+        width: min(260px, 58vw);
+        height: 60px;
       }
 
       .brand-copy span,
@@ -959,10 +952,6 @@
         font-size: 13px;
       }
 
-      .footer-logo {
-        max-width: 250px;
-      }
-
       .mobile-cta {
         left: 10px;
         right: 10px;
@@ -995,11 +984,11 @@
 <body>
   <div class="site-shell">
     <header class="topbar" aria-label="Seitennavigation">
-      <a class="brand" href="#top" aria-label="PoleCreation Start">
+      <div class="brand" aria-label="PoleCreation Logo">
         <span class="brand-mark">
           <img src="assets/polecreation-logo-wide.png" alt="PoleCreation Logo">
         </span>
-      </a>
+      </div>
       <nav class="nav-actions" aria-label="Aktionen">
         <a class="ghost-link" href="#ablauf">Ablauf</a>
         <a class="btn" href="#buchen">Termin buchen</a>
@@ -1223,7 +1212,7 @@
     <footer class="footer">
       <div class="footer-inner">
         <div>
-          <img class="footer-logo" src="assets/polecreation-logo-wide.png" alt="PoleCreation Logo">
+          <h3>PoleCreation</h3>
           <p>Poledance Probetraining in Kempten/Allgäu. Herzlich, wertfrei und für Anfänger:innen geeignet.</p>
         </div>
         <div>
