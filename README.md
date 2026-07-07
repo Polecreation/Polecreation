@@ -9,6 +9,8 @@ Statische Landingpage für PoleCreation Kempten mit Video, Terminauswahl und Buc
 - `netlify.toml` enthält die statische Netlify-Konfiguration.
 - `supabase/schema.sql` enthält die Tabelle für Probetraining-Anmeldungen.
 - `supabase/functions/bright-function/index.ts` speichert Anfragen und versendet E-Mails über Resend.
+- `admin.html` ist der kleine Admin-Bereich für Probetraining-Termine.
+- `supabase/functions/manage-trial-dates/index.ts` verwaltet Termine geschützt per Admin-Passwort.
 
 ## Buchungsablauf
 
@@ -43,6 +45,33 @@ Die Landingpage ruft aktuell diese Function-URL auf:
 ```text
 https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/bright-function
 ```
+
+Die Landingpage lädt sichtbare Termine aus `public.trial_dates`. Falls Supabase nicht erreichbar ist, bleiben die zuletzt fest hinterlegten Termine als Reserve sichtbar.
+
+## Admin-Bereich Termine
+
+Der Admin-Bereich liegt unter:
+
+```text
+/admin.html
+```
+
+Damit Anja Termine pflegen kann:
+
+1. SQL aus `supabase/schema.sql` erneut im Supabase SQL Editor ausführen.
+2. In Supabase unter Edge Functions > Secrets ein starkes Secret setzen:
+
+   - `ADMIN_PASSWORD`
+
+3. Neue Edge Function deployen:
+
+   ```bash
+   supabase functions deploy manage-trial-dates
+   ```
+
+4. Danach `/admin.html` öffnen, Admin-Passwort eingeben und Termine eintragen oder ausblenden.
+
+Die Admin-Seite schreibt keine geheimen Supabase-Schlüssel in den Browser. Änderungen laufen über die geschützte Edge Function `manage-trial-dates`.
 
 ## Netlify Deployment
 

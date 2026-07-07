@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PoleCreation Admin Termine</title>
+  <style>
+    :root {
+      --ink: #241019;
+      --muted: #6c5964;
+      --brand: #d83b78;
+      --brand-dark: #8a1f4f;
+      --soft: #fff7f9;
+      --line: #ead0dc;
+      --good: #197348;
+      --bad: #a52a2a;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: linear-gradient(180deg, #fff 0%, var(--soft) 100%);
+    }
+
+    main {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 64px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-family: Georgia, serif;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    p { color: var(--muted); line-height: 1.55; }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 55px rgba(138, 31, 79, 0.09);
+      padding: 24px;
+      margin-bottom: 22px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      align-items: end;
+    }
+
+    label {
+      display: grid;
+      gap: 8px;
+      color: var(--brand-dark);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    input, select {
+      min-height: 48px;
+      border: 1px solid #d8b7c7;
+      border-radius: 8px;
+      padding: 0 14px;
+      font: inherit;
+      color: var(--ink);
+      background: #fff;
+    }
+
+    input:focus, select:focus {
+      outline: 2px solid rgba(216, 59, 120, 0.18);
+      border-color: var(--brand);
+    }
+
+    button, .link-button {
+      min-height: 48px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0 18px;
+      font: inherit;
+      font-weight: 900;
+      color: #fff;
+      background: var(--brand);
+      cursor: pointer;
+    }
+
+    button.secondary { background: var(--ink); }
+    button.ghost { color: var(--brand-dark); background: #f8e5ee; }
+    button.danger { color: #fff; background: var(--bad); }
+    button:disabled { opacity: 0.6; cursor: wait; }
+
+    [hidden] { display: none !important; }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    .toolbar label { flex: 1 1 280px; }
+
+    .status {
+      display: none;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 16px;
+      font-weight: 800;
+    }
+
+    .status.good { display: block; color: var(--good); background: #edf9f2; border: 1px solid #b8e6c6; }
+    .status.bad { display: block; color: var(--bad); background: #fff1f0; border: 1px solid #f2b8b5; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+    }
+
+    th, td {
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      padding: 14px 10px;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--brand-dark);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .pill.active { color: var(--good); background: #edf9f2; }
+    .pill.inactive { color: var(--bad); background: #fff1f0; }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .small-note { margin: 8px 0 0; font-size: 14px; }
+
+    @media (max-width: 820px) {
+      header { display: block; }
+      .grid { grid-template-columns: 1fr; }
+      th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3) { display: none; }
+      .actions { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Probetraining Termine</h1>
+        <p>Hier kann PoleCreation die sichtbaren Wunschtermine der Landingpage pflegen. Änderungen erscheinen nach dem Speichern automatisch im Buchungsformular.</p>
+      </div>
+      <a class="link-button" href="./index.html" style="display:inline-flex;align-items:center;text-decoration:none;">Zur Landingpage</a>
+    </header>
+
+    <section class="panel">
+      <form id="loginForm" class="toolbar">
+        <label>
+          Admin Passwort
+          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Passwort eingeben">
+        </label>
+        <button type="submit" class="secondary">Einloggen</button>
+      </form>
+      <p class="small-note">Nach dem Einloggen werden die aktuellen Termine automatisch geladen.</p>
+      <div id="status" class="status"></div>
+    </section>
+
+    <section class="panel" data-admin-panel hidden>
+      <h2>Neuen Termin eintragen</h2>
+      <form id="dateForm" class="grid">
+        <label>
+          Datum
+          <input id="date" name="date" type="date" required>
+        </label>
+        <label>
+          Uhrzeit
+          <input id="time" name="time" type="time" required>
+        </label>
+        <label>
+          Plätze
+          <input id="capacity" name="capacity" type="number" min="1" max="30" value="8" required>
+        </label>
+        <button type="submit">Termin hinzufügen</button>
+      </form>
+    </section>
+
+    <section class="panel" data-admin-panel hidden>
+      <h2>Aktuelle Termine</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Termin</th>
+            <th>Datum</th>
+            <th>Uhrzeit</th>
+            <th>Plätze</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="datesTable">
+          <tr><td colspan="6">Noch keine Termine geladen.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    const ADMIN_FUNCTION_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/manage-trial-dates";
+    const passwordInput = document.querySelector("#adminPassword");
+    const statusBox = document.querySelector("#status");
+    const datesTable = document.querySelector("#datesTable");
+    const adminPanels = document.querySelectorAll("[data-admin-panel]");
+
+    passwordInput.value = sessionStorage.getItem("polecreation_admin_password") || "";
+
+    const setLoggedIn = (isLoggedIn) => {
+      adminPanels.forEach((panel) => {
+        panel.hidden = !isLoggedIn;
+      });
+    };
+
+    const showStatus = (message, type = "good") => {
+      statusBox.className = `status ${type}`;
+      statusBox.textContent = message;
+    };
+
+    const requestAdmin = async (payload) => {
+      const password = passwordInput.value.trim();
+      if (!password) {
+        throw new Error("Bitte zuerst das Admin Passwort eingeben.");
+      }
+
+      const response = await fetch(ADMIN_FUNCTION_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-password": password
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || result.ok === false) {
+        throw new Error(result.message || "Die Anfrage konnte nicht verarbeitet werden.");
+      }
+      return result;
+    };
+
+    const renderDates = (dates) => {
+      if (!dates.length) {
+        datesTable.innerHTML = '<tr><td colspan="6">Noch keine Termine vorhanden.</td></tr>';
+        return;
+      }
+
+      datesTable.innerHTML = "";
+      dates.forEach((date) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td><strong>${date.label}</strong></td>
+          <td>${date.date}</td>
+          <td>${String(date.time || "").slice(0, 5)}</td>
+          <td>${date.capacity}</td>
+          <td><span class="pill ${date.active ? "active" : "inactive"}">${date.active ? "Sichtbar" : "Ausgeblendet"}</span></td>
+          <td class="actions">
+            <button type="button" class="ghost" data-toggle="${date.id}" data-active="${date.active ? "false" : "true"}">${date.active ? "Ausblenden" : "Einblenden"}</button>
+            <button type="button" class="danger" data-delete="${date.id}" data-label="${date.label}">Löschen</button>
+          </td>
+        `;
+        datesTable.append(row);
+      });
+    };
+
+    const loadDates = async () => {
+      try {
+        const result = await requestAdmin({ action: "list" });
+        setLoggedIn(true);
+        renderDates(result.dates || []);
+        showStatus("Du bist eingeloggt. Termine wurden geladen.");
+      } catch (error) {
+        showStatus(error.message, "bad");
+      }
+    };
+
+    document.querySelector("#loginForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      sessionStorage.setItem("polecreation_admin_password", passwordInput.value.trim());
+      await loadDates();
+    });
+
+    document.querySelector("#dateForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const button = event.submitter;
+      const data = Object.fromEntries(new FormData(event.currentTarget));
+      button.disabled = true;
+      button.textContent = "Speichert...";
+
+      try {
+        await requestAdmin({
+          action: "create",
+          date: data.date,
+          time: data.time,
+          capacity: Number(data.capacity || 8)
+        });
+        event.currentTarget.reset();
+        document.querySelector("#capacity").value = 8;
+        showStatus("Termin wurde hinzugefügt und ist jetzt auf der Landingpage sichtbar.");
+        await loadDates();
+      } catch (error) {
+        showStatus(error.message, "bad");
+      } finally {
+        button.disabled = false;
+        button.textContent = "Termin hinzufügen";
+      }
+    });
+
+    datesTable.addEventListener("click", async (event) => {
+      const toggleButton = event.target.closest("[data-toggle]");
+      const deleteButton = event.target.closest("[data-delete]");
+      const button = toggleButton || deleteButton;
+      if (!button) return;
+
+      button.disabled = true;
+      try {
+        if (toggleButton) {
+          await requestAdmin({
+            action: "toggle",
+            id: toggleButton.dataset.toggle,
+            active: toggleButton.dataset.active === "true"
+          });
+          showStatus("Terminstatus wurde geändert.");
+        }
+
+        if (deleteButton) {
+          const label = deleteButton.dataset.label || "diesen Termin";
+          if (!window.confirm(`Soll ${label} wirklich gelöscht werden?`)) {
+            return;
+          }
+
+          await requestAdmin({
+            action: "delete",
+            id: deleteButton.dataset.delete
+          });
+          showStatus("Termin wurde gelöscht.");
+        }
+
+        await loadDates();
+      } catch (error) {
+        showStatus(error.message, "bad");
+      } finally {
+        button.disabled = false;
+      }
+    });
+
+    setLoggedIn(false);
+
+    if (passwordInput.value) {
+      loadDates();
+    }
+  </script>
+</body>
+</html>

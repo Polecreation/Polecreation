@@ -675,6 +675,22 @@
       width: 100%;
     }
 
+    .admin-footer-link {
+      display: inline-flex;
+      margin-top: 14px;
+      color: rgba(255, 255, 255, 0.42);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      letter-spacing: 0;
+      transition: color 0.2s ease;
+    }
+
+    .admin-footer-link:hover,
+    .admin-footer-link:focus {
+      color: rgba(255, 255, 255, 0.78);
+    }
+
     @media (max-width: 980px) {
       .hero {
         min-height: auto;
@@ -703,8 +719,17 @@
     }
 
     @media (max-width: 680px) {
+      body {
+        font-size: 15px;
+      }
+
       .topbar {
-        padding: 12px 14px;
+        padding: 10px 12px;
+      }
+
+      .brand-mark {
+        width: 44px;
+        height: 44px;
       }
 
       .brand-copy span,
@@ -713,31 +738,44 @@
       }
 
       .nav-actions .btn {
-        min-height: 38px;
+        min-height: 36px;
         padding: 0 10px;
-        font-size: 13px;
+        font-size: 12px;
       }
 
       .hero {
-        padding: 34px 16px 32px;
+        min-height: auto;
+        padding: 28px 12px 30px;
+        background-position: center top;
+      }
+
+      .hero-inner {
+        gap: 22px;
+      }
+
+      .eyebrow {
+        margin-bottom: 14px;
+        padding: 7px 10px;
+        font-size: 12px;
       }
 
       .hero h1 {
-        font-size: clamp(42px, 13vw, 58px);
+        font-size: clamp(38px, 12vw, 52px);
       }
 
       .hero-copy {
-        font-size: 17px;
+        margin-top: 16px;
+        font-size: 16px;
       }
 
       .hero-actions {
         gap: 8px;
-        margin-top: 22px;
+        margin-top: 20px;
       }
 
       .btn {
         min-height: 40px;
-        padding: 0 13px;
+        padding: 0 12px;
         font-size: 13px;
       }
 
@@ -746,12 +784,14 @@
       }
 
       .hero-note {
-        margin-top: 18px;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 16px;
       }
 
       .hero-note li {
-        min-height: 58px;
-        padding: 10px 12px;
+        min-height: 54px;
+        padding: 9px 11px;
       }
 
       .hero-note strong {
@@ -762,20 +802,38 @@
         font-size: 11px;
       }
 
-      .video-frame {
-        min-height: 270px;
+      .video-card,
+      .portrait,
+      .fact,
+      .gear,
+      .step,
+      .quote,
+      .booking-panel {
+        border-radius: 7px;
       }
 
-      .video-frame video {
-        min-height: 270px;
-      }
-
+      .video-frame,
+      .video-frame video,
       .video-placeholder {
-        min-height: 270px;
+        min-height: 240px;
+      }
+
+      .video-caption {
+        padding: 14px 15px 16px;
       }
 
       .section {
-        padding: 48px 16px;
+        padding: 42px 12px;
+      }
+
+      .section-title {
+        margin-bottom: 18px;
+        font-size: clamp(30px, 9.5vw, 42px);
+      }
+
+      .section-lead {
+        margin: -4px 0 24px;
+        font-size: 16px;
       }
 
       .fact-grid,
@@ -785,21 +843,67 @@
       .form-grid,
       .choice-row {
         grid-template-columns: 1fr;
+        gap: 10px;
       }
 
-      .hero-note {
-        grid-template-columns: 1fr;
+      .fact,
+      .gear,
+      .step,
+      .quote {
+        min-height: auto;
+        padding: 18px;
+      }
+
+      .fact strong {
+        font-size: 21px;
+      }
+
+      .portrait {
+        min-height: 300px;
+      }
+
+      .reasons {
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .reason {
+        padding: 15px;
+      }
+
+      .step::before {
+        margin-bottom: 18px;
+      }
+
+      .booking-layout {
+        gap: 22px;
+      }
+
+      .included {
+        gap: 9px;
+        margin-top: 18px;
       }
 
       .booking-panel {
-        padding: 18px;
+        padding: 16px 14px;
+        box-shadow: 0 16px 44px rgba(72, 20, 44, 0.12);
+      }
+
+      label {
+        font-size: 13px;
       }
 
       input,
       select,
       textarea {
         min-height: 42px;
-        padding: 10px 11px;
+        padding: 9px 10px;
+        font-size: 16px;
+      }
+
+      .check {
+        gap: 9px;
+        font-size: 13px;
       }
 
       .form-actions {
@@ -811,12 +915,44 @@
         min-height: 42px;
       }
 
-      .mobile-cta {
-        display: block;
+      .fineprint {
+        font-size: 12px;
       }
 
       .footer {
-        padding-bottom: 86px;
+        padding: 26px 12px 86px;
+      }
+
+      .footer-inner {
+        gap: 14px;
+        font-size: 13px;
+      }
+
+      .mobile-cta {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        display: block;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .hero {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .section {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .booking-panel {
+        padding: 14px 12px;
+      }
+
+      .hero h1 {
+        font-size: clamp(35px, 11.5vw, 46px);
       }
     }
   </style>
@@ -1022,8 +1158,8 @@
               </div>
               <div class="field full">
                 <label for="appointment">Wunschtermin</label>
-                <select id="appointment" name="appointment" required>
-                  <option value="">Bitte auswählen</option>
+                <select id="appointment" name="appointment" required data-dynamic-appointments>
+                  <option value="">Termine werden geladen...</option>
                   <option value="Montag, 13.07.2026 - 16:30 Uhr">Montag, 13.07.2026 - 16:30 Uhr</option>
                   <option value="Samstag, 25.07.2026 - 17:00 Uhr">Samstag, 25.07.2026 - 17:00 Uhr</option>
                 </select>
@@ -1055,7 +1191,8 @@
           polecreationstudio@gmail.com<br>
           Telefon: 0175 8933490<br>
           USt-IdNr.: DE359561561<br>
-          Instagram: @polecreation.studio
+          Instagram: @polecreation.studio<br>
+          <a class="admin-footer-link" href="./admin.html">Admin</a>
         </span>
       </div>
     </footer>
@@ -1067,6 +1204,57 @@
 
   <script>
     const BOOKING_FUNCTION_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/bright-function";
+    const SUPABASE_REST_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/rest/v1";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_KXNvsTotuvo0kxhqGc4HKA_Pu5QH3lT";
+    const FALLBACK_APPOINTMENTS = [
+      "Montag, 13.07.2026 - 16:30 Uhr",
+      "Samstag, 25.07.2026 - 17:00 Uhr"
+    ];
+
+    const setAppointmentOptions = (appointments) => {
+      document.querySelectorAll("[data-dynamic-appointments]").forEach((select) => {
+        const selectedValue = select.value;
+        select.innerHTML = '<option value="">Bitte auswählen</option>';
+
+        appointments.forEach((appointment) => {
+          const option = document.createElement("option");
+          option.value = appointment;
+          option.textContent = appointment;
+          select.append(option);
+        });
+
+        if (appointments.includes(selectedValue)) {
+          select.value = selectedValue;
+        }
+      });
+    };
+
+    const loadAppointments = async () => {
+      try {
+        const response = await fetch(
+          `${SUPABASE_REST_URL}/trial_dates?select=label&active=eq.true&order=sort_order.asc,date.asc,time.asc`,
+          {
+            headers: {
+              "apikey": SUPABASE_PUBLISHABLE_KEY,
+              "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+            }
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Termine konnten nicht geladen werden.");
+        }
+
+        const rows = await response.json();
+        const appointments = rows.map((row) => row.label).filter(Boolean);
+        setAppointmentOptions(appointments.length ? appointments : FALLBACK_APPOINTMENTS);
+      } catch (error) {
+        console.warn(error);
+        setAppointmentOptions(FALLBACK_APPOINTMENTS);
+      }
+    };
+
+    loadAppointments();
 
     document.querySelectorAll(".booking-form").forEach((form) => {
       form.addEventListener("submit", async (event) => {
