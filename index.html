@@ -68,13 +68,15 @@
     .brand {
       display: flex;
       align-items: center;
+      flex: 1 1 auto;
       min-width: 0;
       pointer-events: none;
     }
 
     .brand-mark {
-      width: min(410px, 48vw);
-      height: 82px;
+      width: clamp(320px, 34vw, 520px);
+      max-width: 100%;
+      height: auto;
       display: flex;
       align-items: center;
       overflow: visible;
@@ -85,7 +87,7 @@
 
     .brand-mark img {
       width: 100%;
-      height: 100%;
+      height: auto;
       object-fit: contain;
       display: block;
     }
@@ -751,8 +753,8 @@
       }
 
       .brand-mark {
-        width: min(260px, 58vw);
-        height: 60px;
+        width: min(220px, 58vw);
+        height: auto;
       }
 
       .brand-copy span,
@@ -1174,7 +1176,7 @@
               </div>
               <div class="field">
                 <label for="birthdate">Geburtsdatum</label>
-                <input id="birthdate" name="birthdate" type="date" required>
+                <input id="birthdate" name="birthdate" type="text" inputmode="numeric" autocomplete="bday" placeholder="TT.MM.JJJJ" pattern="^(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d{2}$" title="Bitte im Format TT.MM.JJJJ eingeben, zum Beispiel 28.04.1996" required>
               </div>
               <div class="field">
                 <label for="phone">Telefonnummer</label>
