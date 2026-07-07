@@ -13,6 +13,7 @@ type BookingLead = {
   phone: string;
   appointment: string;
   whatsapp_consent: boolean;
+  privacy_consent: boolean;
   source?: string;
 };
 
@@ -95,6 +96,10 @@ const normalizeLead = (input: Partial<Record<keyof BookingLead, unknown>>): Book
     input.whatsapp_consent === true ||
     input.whatsapp_consent === "true" ||
     input.whatsapp_consent === "on",
+  privacy_consent:
+    input.privacy_consent === true ||
+    input.privacy_consent === "true" ||
+    input.privacy_consent === "on",
   source: readString(input.source) || "landingpage"
 });
 
@@ -138,6 +143,10 @@ const validateLead = (lead: BookingLead) => {
 
   if (!lead.whatsapp_consent) {
     throw new PublicError("Bitte bestätige die Kontaktaufnahme per WhatsApp.");
+  }
+
+  if (!lead.privacy_consent) {
+    throw new PublicError("Bitte bestätige die Datenschutzerklärung.");
   }
 };
 
@@ -260,6 +269,7 @@ Deno.serve(async (request) => {
         phone: lead.phone,
         appointment: lead.appointment,
         whatsapp_consent: lead.whatsapp_consent,
+        privacy_consent: lead.privacy_consent,
         source: lead.source || "landingpage",
         status: "new",
         automation_status: "pending",

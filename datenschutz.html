@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Datenschutz | PoleCreation</title>
+  <style>
+    :root {
+      --ink: #24151c;
+      --muted: #6d5b64;
+      --cream: #fffaf4;
+      --rose: #e6507f;
+      --line: #ead8de;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; }
+
+    .topbar {
+      padding: 16px clamp(16px, 5vw, 72px);
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 250, 244, 0.92);
+    }
+
+    .logo {
+      width: min(330px, 78vw);
+      display: block;
+      border-radius: 8px;
+      background: var(--white);
+    }
+
+    main {
+      width: min(920px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: clamp(42px, 7vw, 84px) 0;
+    }
+
+    h1 {
+      margin: 0 0 26px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(38px, 7vw, 64px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 34px 0 10px;
+      font-size: 22px;
+      color: #6f2447;
+    }
+
+    p { margin: 0 0 16px; color: var(--muted); }
+
+    .panel {
+      padding: clamp(22px, 4vw, 34px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+      box-shadow: 0 18px 52px rgba(72, 20, 44, 0.08);
+    }
+
+    .back {
+      display: inline-flex;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 24px;
+      padding: 0 16px;
+      border-radius: 8px;
+      color: var(--white);
+      background: var(--rose);
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    @media (max-width: 680px) {
+      .topbar { padding: 12px; }
+      main { width: min(100% - 24px, 920px); padding: 34px 0; }
+      .panel { padding: 20px 16px; }
+    }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="./index.html" aria-label="Zurück zur Landingpage">
+      <img class="logo" src="assets/polecreation-logo-wide.png" alt="PoleCreation Logo">
+    </a>
+  </header>
+  <main>
+    <section class="panel">
+      
+      <h1>Datenschutz</h1>
+      <h2>Allgemeine Hinweise</h2>
+      <p>Die Nutzung unserer Webseite ist in der Regel ohne Angabe personenbezogener Daten möglich. Soweit personenbezogene Daten erhoben werden, erfolgt dies soweit möglich auf freiwilliger Basis.</p>
+      <p>Wir weisen darauf hin, dass die Datenübertragung im Internet Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich.</p>
+      <h2>Probetraining-Anfrage</h2>
+      <p>Wenn du das Formular für ein Probetraining nutzt, verarbeiten wir die von dir eingegebenen Angaben, insbesondere Vorname, Nachname, E-Mail-Adresse, Geburtsdatum, Telefonnummer, Wunschtermin sowie deine Zustimmung zur Kontaktaufnahme.</p>
+      <p>Die Verarbeitung erfolgt zur Bearbeitung deiner Anfrage, zur Reservierung deines Probetrainings und zur Zusendung einer Bestätigung. Die technische Speicherung erfolgt über Supabase. Für den Versand von Bestätigungs-E-Mails nutzen wir Brevo.</p>
+      <h2>Kontaktaufnahme</h2>
+      <p>Bei Kontaktaufnahme per E-Mail, Telefon oder WhatsApp werden die übermittelten Angaben verarbeitet, um deine Anfrage zu beantworten.</p>
+      <h2>Widerspruch gegen Werbung</h2>
+      <p>Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit widersprochen.</p>
+      <h2>Verantwortliche Stelle</h2>
+      <p>PoleCreation, Anja Herz, Im Schlattes 21, 87496 Untrasried<br>E-Mail: <a href="mailto:studio@polecreation.de">studio@polecreation.de</a></p>
+
+      <a class="back" href="./index.html">Zurück zur Landingpage</a>
+    </section>
+  </main>
+</body>
+</html>

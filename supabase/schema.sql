@@ -11,6 +11,7 @@ create table if not exists public.probetraining_leads (
   phone text not null,
   appointment text not null,
   whatsapp_consent boolean not null default false,
+  privacy_consent boolean not null default false,
   status text not null default 'new',
   source text not null default 'landingpage',
   automation_status text not null default 'pending',
@@ -21,6 +22,7 @@ create table if not exists public.probetraining_leads (
 
 alter table public.probetraining_leads
   add column if not exists updated_at timestamptz not null default now(),
+  add column if not exists privacy_consent boolean not null default false,
   add column if not exists automation_status text not null default 'pending',
   add column if not exists confirmation_sent_at timestamptz,
   add column if not exists admin_notification_sent_at timestamptz,
