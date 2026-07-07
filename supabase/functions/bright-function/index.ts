@@ -146,42 +146,49 @@ const toErrorMessage = (error: unknown) =>
 
 const sendEmail = async ({
   apiKey,
-  from,
+  senderEmail,
+  senderName,
   to,
   subject,
   html,
   replyTo
 }: {
   apiKey: string;
-  from: string;
+  senderEmail: string;
+  senderName: string;
   to: string | string[];
   subject: string;
   html: string;
   replyTo?: string;
 }) => {
+  const recipients = Array.isArray(to) ? to : [to];
   const payload: Record<string, unknown> = {
-    from,
-    to,
+    sender: {
+      name: senderName,
+      email: senderEmail
+    },
+    to: recipients.map((email) => ({ email })),
     subject,
-    html
+    htmlContent: html
   };
 
   if (replyTo) {
-    payload.reply_to = replyTo;
+    payload.replyTo = { email: replyTo };
   }
 
-  const response = await fetch("https://api.resend.com/emails", {
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json"
+      "api-key": apiKey,
+      "Content-Type": "application/json",
+      "Accept": "application/json"
     },
     body: JSON.stringify(payload)
   });
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Resend error: ${errorText || response.status}`);
+    throw new Error(`Brevo error: ${errorText || response.status}`);
   }
 };
 
@@ -229,8 +236,9 @@ Deno.serve(async (request) => {
   try {
     const supabaseUrl = requiredEnv("SUPABASE_URL");
     const serviceRoleKey = getSupabaseSecretKey();
-    const resendApiKey = requiredEnv("RESEND_API_KEY");
-    const fromEmail = requiredEnv("FROM_EMAIL");
+    const brevoApiKey = requiredEnv("BREVO_API_KEY");
+    const senderEmail = requiredEnv("BREVO_SENDER_EMAIL");
+    const senderName = Deno.env.get("BREVO_SENDER_NAME") || "PoleCreation";
     const adminEmail = requiredEnv("ADMIN_EMAIL");
 
     const lead = normalizeLead(await request.json());
@@ -280,8 +288,9 @@ Deno.serve(async (request) => {
 
     try {
       await sendEmail({
-        apiKey: resendApiKey,
-        from: fromEmail,
+        apiKey: brevoApiKey,
+        senderEmail,
+        senderName,
         to: lead.email,
         subject: "Dein Probetraining bei PoleCreation ist bestätigt",
         html: `
@@ -326,8 +335,9 @@ Deno.serve(async (request) => {
       customerEmailSent = true;
 
       await sendEmail({
-        apiKey: resendApiKey,
-        from: fromEmail,
+        apiKey: brevoApiKey,
+        senderEmail,
+        senderName,
         to: adminEmail,
         subject: "Neue Probetraining-Anmeldung",
         html: `

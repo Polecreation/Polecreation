@@ -8,7 +8,7 @@ Statische Landingpage für PoleCreation Kempten mit Video, Terminauswahl und Buc
 - `assets/` enthält Bilder und Logos.
 - `netlify.toml` enthält die statische Netlify-Konfiguration.
 - `supabase/schema.sql` enthält die Tabelle für Probetraining-Anmeldungen.
-- `supabase/functions/bright-function/index.ts` speichert Anfragen und versendet E-Mails über Resend.
+- `supabase/functions/bright-function/index.ts` speichert Anfragen und versendet E-Mails über Brevo.
 - `admin.html` ist der kleine Admin-Bereich für Probetraining-Termine.
 - `supabase/functions/manage-trial-dates/index.ts` verwaltet Termine geschützt per Admin-Passwort.
 
@@ -17,7 +17,7 @@ Statische Landingpage für PoleCreation Kempten mit Video, Terminauswahl und Buc
 1. Der Kunde füllt das Formular in `index.html` aus.
 2. Das Formular sendet die Anfrage an die Supabase Edge Function `bright-function`.
 3. Die Function speichert den Lead in `public.probetraining_leads`.
-4. Der Kunde erhält eine ausführliche Bestätigungs-E-Mail.
+4. Der Kunde erhält über Brevo eine ausführliche Bestätigungs-E-Mail.
 5. PoleCreation erhält eine kurze interne Benachrichtigung mit den Kontaktdaten und dem Termin.
 
 Wenn der Lead gespeichert wurde, aber der E-Mail-Versand fehlschlägt, bleibt die Anfrage in der Datenbank mit `automation_status = 'email_failed'` erhalten. So muss der Kunde nicht erneut absenden und PoleCreation kann manuell nachfassen.
@@ -36,8 +36,9 @@ Wenn der Lead gespeichert wurde, aber der E-Mail-Versand fehlschlägt, bleibt di
 
    - `SUPABASE_URL`
    - `SUPABASE_SERVICE_ROLE_KEY`
-   - `RESEND_API_KEY`
-   - `FROM_EMAIL`
+   - `BREVO_API_KEY`
+   - `BREVO_SENDER_EMAIL`
+   - `BREVO_SENDER_NAME`
    - `ADMIN_EMAIL`
 
 Die Landingpage ruft aktuell diese Function-URL auf:
