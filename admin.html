@@ -171,10 +171,126 @@
     .small-note { margin: 8px 0 0; font-size: 14px; }
 
     @media (max-width: 820px) {
-      header { display: block; }
-      .grid { grid-template-columns: 1fr; }
-      th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3) { display: none; }
-      .actions { justify-content: flex-start; }
+      main {
+        width: min(100% - 24px, 680px);
+        padding: 24px 0 48px;
+      }
+
+      header {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        font-size: clamp(36px, 12vw, 48px);
+      }
+
+      header p {
+        margin-bottom: 0;
+        font-size: 16px;
+      }
+
+      .panel {
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .link-button,
+      button {
+        width: 100%;
+        min-height: 52px;
+      }
+
+      .toolbar {
+        display: grid;
+        gap: 12px;
+      }
+
+      .toolbar label {
+        flex-basis: auto;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      input,
+      select {
+        min-height: 54px;
+        font-size: 16px;
+      }
+
+      table,
+      thead,
+      tbody,
+      tr,
+      td {
+        display: block;
+        width: 100%;
+      }
+
+      thead {
+        display: none;
+      }
+
+      tr {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: #fff;
+      }
+
+      td {
+        border-bottom: 0;
+        padding: 8px 0;
+      }
+
+      td[data-label] {
+        display: grid;
+        grid-template-columns: 96px minmax(0, 1fr);
+        gap: 10px;
+        align-items: start;
+      }
+
+      td[data-label]::before {
+        content: attr(data-label);
+        color: var(--brand-dark);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        justify-content: stretch;
+        padding-top: 10px;
+      }
+
+      .small-note {
+        font-size: 13px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      main {
+        width: calc(100% - 18px);
+        padding-top: 18px;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      td[data-label] {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
     }
   </style>
 </head>
@@ -291,11 +407,11 @@
       dates.forEach((date) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td><strong>${date.label}</strong></td>
-          <td>${date.date}</td>
-          <td>${String(date.time || "").slice(0, 5)}</td>
-          <td>${date.capacity}</td>
-          <td><span class="pill ${date.active ? "active" : "inactive"}">${date.active ? "Sichtbar" : "Ausgeblendet"}</span></td>
+          <td data-label="Termin"><strong>${date.label}</strong></td>
+          <td data-label="Datum">${date.date}</td>
+          <td data-label="Uhrzeit">${String(date.time || "").slice(0, 5)}</td>
+          <td data-label="Plätze">${date.capacity}</td>
+          <td data-label="Status"><span class="pill ${date.active ? "active" : "inactive"}">${date.active ? "Sichtbar" : "Ausgeblendet"}</span></td>
           <td class="actions">
             <button type="button" class="ghost" data-toggle="${date.id}" data-active="${date.active ? "false" : "true"}">${date.active ? "Ausblenden" : "Einblenden"}</button>
             <button type="button" class="danger" data-delete="${date.id}" data-label="${date.label}">Löschen</button>
