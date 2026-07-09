@@ -85,11 +85,25 @@ const escapeHtml = (value: string) =>
 
 const readString = (value: unknown) => (typeof value === "string" ? value.trim() : "");
 
+const normalizeBirthdate = (value: unknown) => {
+  const raw = readString(value);
+  const digits = raw.replace(/\D/g, "");
+
+  if (digits.length === 8) {
+    const day = digits.slice(0, 2);
+    const month = digits.slice(2, 4);
+    const year = digits.slice(4, 8);
+    return `${year}-${month}-${day}`;
+  }
+
+  return raw;
+};
+
 const normalizeLead = (input: Partial<Record<keyof BookingLead, unknown>>): BookingLead => ({
   first_name: readString(input.first_name),
   last_name: readString(input.last_name),
   email: readString(input.email).toLowerCase(),
-  birthdate: readString(input.birthdate),
+  birthdate: normalizeBirthdate(input.birthdate),
   phone: readString(input.phone),
   appointment: readString(input.appointment),
   whatsapp_consent:
