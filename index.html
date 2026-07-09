@@ -1176,7 +1176,7 @@
               </div>
               <div class="field">
                 <label for="birthdate">Geburtsdatum</label>
-                <input id="birthdate" name="birthdate" type="text" inputmode="numeric" autocomplete="bday" placeholder="TT.MM.JJJJ oder TTMMJJJJ" pattern="^((0[1-9]|[12][0-9]|3[01])(0[1-9]|1[0-2])(19|20)\d{2}|(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[0-2])\.(19|20)\d{2})$" title="Bitte gib dein Geburtsdatum ein, zum Beispiel 05051993 oder 05.05.1993" required>
+                <input id="birthdate" name="birthdate" type="text" inputmode="numeric" autocomplete="bday" placeholder="z. B. 05051993 oder 05.05.1993" title="Bitte gib dein Geburtsdatum ein, zum Beispiel 05051993 oder 05.05.1993" required>
               </div>
               <div class="field">
                 <label for="phone">Telefonnummer</label>
@@ -1300,6 +1300,28 @@
 
     loadAppointments();
 
+    const normalizeBirthdateForSubmit = (value) => {
+      const raw = String(value || "").trim();
+      const digits = raw.replace(/\D/g, "");
+
+      if (digits.length === 8) {
+        const day = digits.slice(0, 2);
+        const month = digits.slice(2, 4);
+        const year = digits.slice(4, 8);
+        return `${year}-${month}-${day}`;
+      }
+
+      const dateParts = raw.match(/^(\d{1,2})\D+(\d{1,2})\D+((?:19|20)\d{2})$/);
+      if (dateParts) {
+        const day = dateParts[1].padStart(2, "0");
+        const month = dateParts[2].padStart(2, "0");
+        const year = dateParts[3];
+        return `${year}-${month}-${day}`;
+      }
+
+      return raw;
+    };
+
     document.querySelectorAll(".booking-form").forEach((form) => {
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -1312,7 +1334,7 @@
           first_name: data.firstName,
           last_name: data.lastName,
           email: data.email,
-          birthdate: data.birthdate,
+          birthdate: normalizeBirthdateForSubmit(data.birthdate),
           phone: data.phone,
           appointment: data.appointment,
           whatsapp_consent: data.whatsappConsent === "on",

@@ -96,6 +96,14 @@ const normalizeBirthdate = (value: unknown) => {
     return `${year}-${month}-${day}`;
   }
 
+  const dateParts = raw.match(/^(\d{1,2})\D+(\d{1,2})\D+((?:19|20)\d{2})$/);
+  if (dateParts) {
+    const day = dateParts[1].padStart(2, "0");
+    const month = dateParts[2].padStart(2, "0");
+    const year = dateParts[3];
+    return `${year}-${month}-${day}`;
+  }
+
   return raw;
 };
 
