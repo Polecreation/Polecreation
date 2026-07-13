@@ -26,6 +26,17 @@ type LeadStatusPatch = {
   updated_at?: string;
 };
 
+type TrialDateRow = {
+  label: string;
+  capacity: number;
+  active: boolean;
+};
+
+type ExistingLeadRow = {
+  id: string;
+  status: string;
+};
+
 class PublicError extends Error {
   status: number;
 
@@ -175,6 +186,59 @@ const validateLead = (lead: BookingLead) => {
 const toErrorMessage = (error: unknown) =>
   error instanceof Error ? error.message : String(error);
 
+const supabaseJsonRequest = async <T>(
+  supabaseUrl: string,
+  serviceRoleKey: string,
+  path: string
+): Promise<T> => {
+  const response = await fetch(`${supabaseUrl}/rest/v1/${path}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": serviceRoleKey,
+      "Authorization": `Bearer ${serviceRoleKey}`
+    }
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Supabase read error: ${errorText || response.status}`);
+  }
+
+  return response.json();
+};
+
+const getBookingMode = async (
+  supabaseUrl: string,
+  serviceRoleKey: string,
+  appointment: string
+) => {
+  const encodedAppointment = encodeURIComponent(appointment);
+  const dates = await supabaseJsonRequest<TrialDateRow[]>(
+    supabaseUrl,
+    serviceRoleKey,
+    `trial_dates?select=label,capacity,active&label=eq.${encodedAppointment}&active=eq.true&limit=1`
+  );
+
+  if (!dates.length) {
+    return { isWaitlist: false, capacity: null, bookedCount: 0 };
+  }
+
+  const trialDate = dates[0];
+  const existingLeads = await supabaseJsonRequest<ExistingLeadRow[]>(
+    supabaseUrl,
+    serviceRoleKey,
+    `probetraining_leads?select=id,status&appointment=eq.${encodedAppointment}&status=neq.waitlist&status=neq.cancelled`
+  );
+
+  const bookedCount = existingLeads.length;
+  return {
+    isWaitlist: bookedCount >= Number(trialDate.capacity || 0),
+    capacity: Number(trialDate.capacity || 0),
+    bookedCount
+  };
+};
+
 const sendEmail = async ({
   apiKey,
   senderEmail,
@@ -275,6 +339,9 @@ Deno.serve(async (request) => {
     const lead = normalizeLead(await request.json());
     validateLead(lead);
 
+    const bookingMode = await getBookingMode(supabaseUrl, serviceRoleKey, lead.appointment);
+    const leadStatus = bookingMode.isWaitlist ? "waitlist" : "new";
+
     const insertResponse = await fetch(`${supabaseUrl}/rest/v1/probetraining_leads`, {
       method: "POST",
       headers: {
@@ -293,8 +360,8 @@ Deno.serve(async (request) => {
         whatsapp_consent: lead.whatsapp_consent,
         privacy_consent: lead.privacy_consent,
         source: lead.source || "landingpage",
-        status: "new",
-        automation_status: "pending",
+        status: leadStatus,
+        automation_status: bookingMode.isWaitlist ? "waitlist_pending" : "pending",
         email_error: null
       })
     });
@@ -319,18 +386,26 @@ Deno.serve(async (request) => {
     let adminEmailSent = false;
 
     try {
+      const customerSubject = bookingMode.isWaitlist
+        ? "Du bist auf der Warteliste bei PoleCreation"
+        : "Dein Probetraining bei PoleCreation ist bestätigt";
+      const introText = bookingMode.isWaitlist
+        ? "schön, dass du dich für ein Probetraining bei PoleCreation eingetragen hast. Der ausgewählte Termin ist aktuell voll. Wir haben dich deshalb auf die Warteliste gesetzt und melden uns bei dir, sobald ein Platz frei wird."
+        : "schön, dass du dein Probetraining bei PoleCreation gebucht hast. Endlich deine Chance für eine neue Leidenschaft und mehr Körperbewusstsein! Wir freuen uns riesig darauf, dir unsere wundervolle Sportart Poledance näherzubringen.";
+      const appointmentHeadline = bookingMode.isWaitlist ? "Dein Wartelistentermin" : "Dein Termin";
+
       await sendEmail({
         apiKey: brevoApiKey,
         senderEmail,
         senderName,
         to: lead.email,
-        subject: "Dein Probetraining bei PoleCreation ist bestätigt",
+        subject: customerSubject,
         html: `
           <p>Hallo ${firstName},</p>
 
-          <p>schön, dass du dein Probetraining bei PoleCreation gebucht hast. Endlich deine Chance für eine neue Leidenschaft und mehr Körperbewusstsein! Wir freuen uns riesig darauf, dir unsere wundervolle Sportart Poledance näherzubringen.</p>
+          <p>${introText}</p>
 
-          <p><strong>Dein Termin</strong><br>${appointment}</p>
+          <p><strong>${appointmentHeadline}</strong><br>${appointment}</p>
 
           <p><strong>Unser Studio</strong><br>
           PoleCreation<br>
@@ -371,15 +446,17 @@ Deno.serve(async (request) => {
         senderEmail,
         senderName,
         to: adminEmail,
-        subject: "Neue Probetraining-Anmeldung",
+        subject: bookingMode.isWaitlist ? "Neue Wartelisten-Anfrage" : "Neue Probetraining-Anmeldung",
         html: `
-          <p>Es gibt eine neue Probetraining-Anmeldung.</p>
+          <p>Es gibt eine neue ${bookingMode.isWaitlist ? "Wartelisten-Anfrage" : "Probetraining-Anmeldung"}.</p>
           <p>
+            <strong>Status:</strong> ${bookingMode.isWaitlist ? "Warteliste" : "Bestätigt"}<br>
             <strong>Name:</strong> ${firstName} ${lastName}<br>
             <strong>E-Mail:</strong> ${email}<br>
             <strong>Telefon:</strong> ${phone}<br>
             <strong>Geburtsdatum:</strong> ${birthdate}<br>
-            <strong>Termin:</strong> ${appointment}
+            <strong>Termin:</strong> ${appointment}<br>
+            <strong>Plätze:</strong> ${bookingMode.bookedCount}${bookingMode.capacity ? ` / ${bookingMode.capacity}` : ""}
           </p>
         `,
         replyTo: lead.email
@@ -388,18 +465,26 @@ Deno.serve(async (request) => {
 
       const sentAt = new Date().toISOString();
       await updateLeadStatus(supabaseUrl, serviceRoleKey, leadId, {
-        status: "confirmed",
-        automation_status: "confirmed_sent",
+        status: bookingMode.isWaitlist ? "waitlist" : "confirmed",
+        automation_status: bookingMode.isWaitlist ? "waitlist_sent" : "confirmed_sent",
         confirmation_sent_at: sentAt,
         admin_notification_sent_at: sentAt,
         email_error: null
       });
 
-      return jsonResponse({ ok: true, id: leadId, email_sent: true });
+      return jsonResponse({
+        ok: true,
+        id: leadId,
+        email_sent: true,
+        status: bookingMode.isWaitlist ? "waitlist" : "confirmed",
+        message: bookingMode.isWaitlist
+          ? "Danke! Der Termin ist aktuell voll. Du wurdest auf die Warteliste gesetzt und erhältst gleich eine E-Mail mit allen Infos."
+          : "Danke! Deine Anfrage ist eingegangen. Du erhältst gleich eine Bestätigung per E-Mail."
+      });
     } catch (emailError) {
       const sentAt = new Date().toISOString();
       await updateLeadStatus(supabaseUrl, serviceRoleKey, leadId, {
-        status: "email_pending",
+        status: bookingMode.isWaitlist ? "waitlist" : "email_pending",
         automation_status: "email_failed",
         confirmation_sent_at: customerEmailSent ? sentAt : undefined,
         admin_notification_sent_at: adminEmailSent ? sentAt : undefined,

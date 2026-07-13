@@ -168,6 +168,18 @@
       flex-wrap: wrap;
     }
 
+    .row-editor {
+      display: grid;
+      grid-template-columns: minmax(150px, 1.2fr) minmax(100px, 0.8fr) minmax(80px, 0.55fr);
+      gap: 8px;
+      align-items: center;
+    }
+
+    .row-editor input {
+      min-height: 40px;
+      padding: 0 10px;
+    }
+
     .small-note { margin: 8px 0 0; font-size: 14px; }
 
     @media (max-width: 820px) {
@@ -264,6 +276,14 @@
         letter-spacing: 0.04em;
       }
 
+      .row-editor {
+        grid-template-columns: 1fr;
+      }
+
+      .row-editor input {
+        min-height: 48px;
+      }
+
       .actions {
         display: grid;
         grid-template-columns: 1fr;
@@ -343,13 +363,15 @@
             <th>Termin</th>
             <th>Datum</th>
             <th>Uhrzeit</th>
-            <th>Plätze</th>
+            <th>Termin bearbeiten</th>
+            <th>Belegt</th>
+            <th>Warteliste</th>
             <th>Status</th>
             <th></th>
           </tr>
         </thead>
         <tbody id="datesTable">
-          <tr><td colspan="6">Noch keine Termine geladen.</td></tr>
+          <tr><td colspan="7">Noch keine Termine geladen.</td></tr>
         </tbody>
       </table>
     </section>
@@ -399,20 +421,28 @@
 
     const renderDates = (dates) => {
       if (!dates.length) {
-        datesTable.innerHTML = '<tr><td colspan="6">Noch keine Termine vorhanden.</td></tr>';
+        datesTable.innerHTML = '<tr><td colspan="7">Noch keine Termine vorhanden.</td></tr>';
         return;
       }
 
       datesTable.innerHTML = "";
       dates.forEach((date) => {
         const row = document.createElement("tr");
+        const timeValue = String(date.time || "").slice(0, 5);
         row.innerHTML = `
           <td data-label="Termin"><strong>${date.label}</strong></td>
-          <td data-label="Datum">${date.date}</td>
-          <td data-label="Uhrzeit">${String(date.time || "").slice(0, 5)}</td>
-          <td data-label="Plätze">${date.capacity}</td>
+          <td data-label="Bearbeiten">
+            <div class="row-editor">
+              <input type="date" value="${date.date}" data-edit-date="${date.id}" aria-label="Datum bearbeiten">
+              <input type="time" value="${timeValue}" data-edit-time="${date.id}" aria-label="Uhrzeit bearbeiten">
+              <input type="number" min="1" max="30" value="${date.capacity}" data-edit-capacity="${date.id}" aria-label="Plätze bearbeiten">
+            </div>
+          </td>
+          <td data-label="Belegt">${date.booked_count || 0} / ${date.capacity}</td>
+          <td data-label="Warteliste">${date.waitlist_count || 0}</td>
           <td data-label="Status"><span class="pill ${date.active ? "active" : "inactive"}">${date.active ? "Sichtbar" : "Ausgeblendet"}</span></td>
           <td class="actions">
+            <button type="button" data-save="${date.id}">Speichern</button>
             <button type="button" class="ghost" data-toggle="${date.id}" data-active="${date.active ? "false" : "true"}">${date.active ? "Ausblenden" : "Einblenden"}</button>
             <button type="button" class="danger" data-delete="${date.id}" data-label="${date.label}">Löschen</button>
           </td>
@@ -465,13 +495,30 @@
     });
 
     datesTable.addEventListener("click", async (event) => {
+      const saveButton = event.target.closest("[data-save]");
       const toggleButton = event.target.closest("[data-toggle]");
       const deleteButton = event.target.closest("[data-delete]");
-      const button = toggleButton || deleteButton;
+      const button = saveButton || toggleButton || deleteButton;
       if (!button) return;
 
       button.disabled = true;
       try {
+        if (saveButton) {
+          const id = saveButton.dataset.save;
+          const dateInput = datesTable.querySelector(`[data-edit-date="${id}"]`);
+          const timeInput = datesTable.querySelector(`[data-edit-time="${id}"]`);
+          const capacityInput = datesTable.querySelector(`[data-edit-capacity="${id}"]`);
+
+          await requestAdmin({
+            action: "update",
+            id,
+            date: dateInput?.value,
+            time: timeInput?.value,
+            capacity: Number(capacityInput?.value || 8)
+          });
+          showStatus("Termin wurde gespeichert.");
+        }
+
         if (toggleButton) {
           await requestAdmin({
             action: "toggle",

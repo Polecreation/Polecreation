@@ -1255,6 +1255,20 @@
       "Samstag, 25.07.2026 - 17:00 Uhr"
     ];
 
+    const getTodayIsoDate = () => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    const appointmentDateFromLabel = (label) => {
+      const match = String(label || "").match(/(\d{2})\.(\d{2})\.(\d{4})/);
+      if (!match) return "";
+      return `${match[3]}-${match[2]}-${match[1]}`;
+    };
+
     const setAppointmentOptions = (appointments) => {
       document.querySelectorAll("[data-dynamic-appointments]").forEach((select) => {
         const selectedValue = select.value;
@@ -1274,9 +1288,11 @@
     };
 
     const loadAppointments = async () => {
+      const todayIso = getTodayIsoDate();
+
       try {
         const response = await fetch(
-          `${SUPABASE_REST_URL}/trial_dates?select=label&active=eq.true&order=sort_order.asc,date.asc,time.asc`,
+          `${SUPABASE_REST_URL}/trial_dates?select=label,date&active=eq.true&date=gte.${todayIso}&order=sort_order.asc,date.asc,time.asc`,
           {
             headers: {
               "apikey": SUPABASE_PUBLISHABLE_KEY,
@@ -1291,10 +1307,10 @@
 
         const rows = await response.json();
         const appointments = rows.map((row) => row.label).filter(Boolean);
-        setAppointmentOptions(appointments.length ? appointments : FALLBACK_APPOINTMENTS);
+        setAppointmentOptions(appointments.length ? appointments : FALLBACK_APPOINTMENTS.filter((label) => appointmentDateFromLabel(label) >= todayIso));
       } catch (error) {
         console.warn(error);
-        setAppointmentOptions(FALLBACK_APPOINTMENTS);
+        setAppointmentOptions(FALLBACK_APPOINTMENTS.filter((label) => appointmentDateFromLabel(label) >= todayIso));
       }
     };
 

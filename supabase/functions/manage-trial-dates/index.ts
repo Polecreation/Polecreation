@@ -14,6 +14,23 @@ type TrialDatePayload = {
   active?: boolean;
 };
 
+type TrialDateRow = {
+  id: string;
+  date: string;
+  time: string;
+  label: string;
+  capacity: number;
+  active: boolean;
+  sort_order: number;
+  booked_count?: number;
+  waitlist_count?: number;
+};
+
+type LeadRow = {
+  appointment: string;
+  status: string;
+};
+
 const jsonResponse = (body: Record<string, unknown>, status = 200) =>
   new Response(JSON.stringify(body), {
     status,
@@ -115,14 +132,43 @@ Deno.serve(async (request) => {
     const payload = (await request.json()) as TrialDatePayload;
 
     if (payload.action === "list") {
-      const dates = await supabaseRequest(
+      const dates = (await supabaseRequest(
         "trial_dates?select=*&order=active.desc,sort_order.asc,date.asc,time.asc",
         { method: "GET" },
         supabaseUrl,
         serviceRoleKey
-      );
+      )) as TrialDateRow[];
 
-      return jsonResponse({ ok: true, dates });
+      const leads = (await supabaseRequest(
+        "probetraining_leads?select=appointment,status",
+        { method: "GET" },
+        supabaseUrl,
+        serviceRoleKey
+      )) as LeadRow[];
+
+      const countsByAppointment = new Map<string, { booked: number; waitlist: number }>();
+      leads.forEach((lead) => {
+        const appointment = lead.appointment || "";
+        if (!appointment) return;
+        const counts = countsByAppointment.get(appointment) || { booked: 0, waitlist: 0 };
+        if (lead.status === "waitlist") {
+          counts.waitlist += 1;
+        } else if (lead.status !== "cancelled") {
+          counts.booked += 1;
+        }
+        countsByAppointment.set(appointment, counts);
+      });
+
+      const enrichedDates = dates.map((date) => {
+        const counts = countsByAppointment.get(date.label) || { booked: 0, waitlist: 0 };
+        return {
+          ...date,
+          booked_count: counts.booked,
+          waitlist_count: counts.waitlist
+        };
+      });
+
+      return jsonResponse({ ok: true, dates: enrichedDates });
     }
 
     if (payload.action === "create") {
@@ -148,6 +194,43 @@ Deno.serve(async (request) => {
             capacity,
             active: true,
             sort_order: sortOrder
+          })
+        },
+        supabaseUrl,
+        serviceRoleKey
+      );
+
+      return jsonResponse({ ok: true, date: rows?.[0] });
+    }
+
+    if (payload.action === "update") {
+      if (!payload.id) {
+        return jsonResponse({ ok: false, message: "Termin-ID fehlt." }, 400);
+      }
+
+      const date = String(payload.date || "").trim();
+      const time = String(payload.time || "").trim();
+      const capacity = Number.isFinite(payload.capacity) ? Number(payload.capacity) : 8;
+
+      if (!isValidDate(date) || !isValidTime(time) || capacity < 1) {
+        return jsonResponse({ ok: false, message: "Bitte Datum, Uhrzeit und Plätze prüfen." }, 400);
+      }
+
+      const label = formatGermanLabel(date, time);
+      const sortOrder = Number(`${date.replaceAll("-", "")}${time.replace(":", "")}`);
+
+      const rows = await supabaseRequest(
+        `trial_dates?id=eq.${encodeURIComponent(payload.id)}`,
+        {
+          method: "PATCH",
+          headers: { "Prefer": "return=representation" },
+          body: JSON.stringify({
+            date,
+            time,
+            label,
+            capacity,
+            sort_order: sortOrder,
+            updated_at: new Date().toISOString()
           })
         },
         supabaseUrl,

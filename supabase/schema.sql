@@ -42,6 +42,9 @@ with check (true);
 create index if not exists probetraining_leads_created_at_idx
 on public.probetraining_leads (created_at desc);
 
+create index if not exists probetraining_leads_appointment_status_idx
+on public.probetraining_leads (appointment, status);
+
 create table if not exists public.trial_dates (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
