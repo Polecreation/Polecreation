@@ -168,6 +168,89 @@
       flex-wrap: wrap;
     }
 
+    .dates-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .date-card {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.1fr) minmax(320px, 1.3fr) minmax(210px, 0.9fr);
+      gap: 16px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .date-card.is-full {
+      border-color: #edb2a9;
+      background: #fff8f6;
+    }
+
+    .date-title {
+      display: grid;
+      gap: 8px;
+    }
+
+    .date-title strong {
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .date-meta,
+    .capacity-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .capacity-box {
+      display: grid;
+      gap: 10px;
+    }
+
+    .capacity-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .capacity-bar {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #f2dce6;
+    }
+
+    .capacity-fill {
+      height: 100%;
+      width: var(--capacity-width, 0%);
+      border-radius: inherit;
+      background: var(--brand);
+    }
+
+    .date-card.is-full .capacity-fill {
+      background: var(--bad);
+    }
+
+    .pill.full { color: var(--bad); background: #fff1f0; }
+    .pill.waitlist { color: #8a5a00; background: #fff4d8; }
+    .pill.past { color: var(--muted); background: #f4edf1; }
+
+    .empty-state {
+      margin: 0;
+      padding: 16px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      background: #fff;
+    }
+
     .row-editor {
       display: grid;
       grid-template-columns: minmax(150px, 1.2fr) minmax(100px, 0.8fr) minmax(80px, 0.55fr);
@@ -234,46 +317,9 @@
         font-size: 16px;
       }
 
-      table,
-      thead,
-      tbody,
-      tr,
-      td {
-        display: block;
-        width: 100%;
-      }
-
-      thead {
-        display: none;
-      }
-
-      tr {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        padding: 12px;
-        margin-bottom: 12px;
-        background: #fff;
-      }
-
-      td {
-        border-bottom: 0;
-        padding: 8px 0;
-      }
-
-      td[data-label] {
-        display: grid;
-        grid-template-columns: 96px minmax(0, 1fr);
-        gap: 10px;
-        align-items: start;
-      }
-
-      td[data-label]::before {
-        content: attr(data-label);
-        color: var(--brand-dark);
-        font-size: 12px;
-        font-weight: 900;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
+      .date-card {
+        grid-template-columns: 1fr;
+        gap: 14px;
       }
 
       .row-editor {
@@ -307,9 +353,12 @@
         padding: 14px;
       }
 
-      td[data-label] {
-        grid-template-columns: 1fr;
-        gap: 4px;
+      .date-card {
+        padding: 12px;
+      }
+
+      .date-title strong {
+        font-size: 16px;
       }
     }
   </style>
@@ -357,23 +406,9 @@
 
     <section class="panel" data-admin-panel hidden>
       <h2>Aktuelle Termine</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Termin</th>
-            <th>Datum</th>
-            <th>Uhrzeit</th>
-            <th>Termin bearbeiten</th>
-            <th>Belegt</th>
-            <th>Warteliste</th>
-            <th>Status</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="datesTable">
-          <tr><td colspan="7">Noch keine Termine geladen.</td></tr>
-        </tbody>
-      </table>
+      <div class="dates-list" id="datesTable">
+        <p class="empty-state">Noch keine Termine geladen.</p>
+      </div>
     </section>
   </main>
 
@@ -419,35 +454,69 @@
       return result;
     };
 
+    const getTodayIsoDate = () => {
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = String(today.getMonth() + 1).padStart(2, "0");
+      const day = String(today.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
     const renderDates = (dates) => {
       if (!dates.length) {
-        datesTable.innerHTML = '<tr><td colspan="7">Noch keine Termine vorhanden.</td></tr>';
+        datesTable.innerHTML = '<p class="empty-state">Noch keine Termine vorhanden.</p>';
         return;
       }
 
+      const todayIso = getTodayIsoDate();
       datesTable.innerHTML = "";
       dates.forEach((date) => {
-        const row = document.createElement("tr");
+        const bookedCount = Number(date.booked_count || 0);
+        const waitlistCount = Number(date.waitlist_count || 0);
+        const capacity = Number(date.capacity || 0);
+        const isFull = capacity > 0 && bookedCount >= capacity;
+        const isPast = date.date < todayIso;
+        const usage = capacity > 0 ? Math.min(100, Math.round((bookedCount / capacity) * 100)) : 0;
+        const card = document.createElement("article");
+        card.className = `date-card ${isFull ? "is-full" : ""}`;
         const timeValue = String(date.time || "").slice(0, 5);
-        row.innerHTML = `
-          <td data-label="Termin"><strong>${date.label}</strong></td>
-          <td data-label="Bearbeiten">
+        card.innerHTML = `
+          <div class="date-title">
+            <strong>${date.label}</strong>
+            <div class="date-meta">
+              <span class="pill ${date.active ? "active" : "inactive"}">${date.active ? "Sichtbar" : "Ausgeblendet"}</span>
+              ${isPast ? '<span class="pill past">Vergangen</span>' : ""}
+              ${isFull ? '<span class="pill full">Voll</span>' : ""}
+              ${waitlistCount ? '<span class="pill waitlist">Warteliste aktiv</span>' : ""}
+            </div>
+          </div>
+          <div>
             <div class="row-editor">
               <input type="date" value="${date.date}" data-edit-date="${date.id}" aria-label="Datum bearbeiten">
               <input type="time" value="${timeValue}" data-edit-time="${date.id}" aria-label="Uhrzeit bearbeiten">
-              <input type="number" min="1" max="30" value="${date.capacity}" data-edit-capacity="${date.id}" aria-label="Plätze bearbeiten">
+              <input type="number" min="1" max="30" value="${capacity}" data-edit-capacity="${date.id}" aria-label="Plätze bearbeiten">
             </div>
-          </td>
-          <td data-label="Belegt">${date.booked_count || 0} / ${date.capacity}</td>
-          <td data-label="Warteliste">${date.waitlist_count || 0}</td>
-          <td data-label="Status"><span class="pill ${date.active ? "active" : "inactive"}">${date.active ? "Sichtbar" : "Ausgeblendet"}</span></td>
-          <td class="actions">
-            <button type="button" data-save="${date.id}">Speichern</button>
-            <button type="button" class="ghost" data-toggle="${date.id}" data-active="${date.active ? "false" : "true"}">${date.active ? "Ausblenden" : "Einblenden"}</button>
-            <button type="button" class="danger" data-delete="${date.id}" data-label="${date.label}">Löschen</button>
-          </td>
+          </div>
+          <div class="capacity-box">
+            <div class="capacity-line">
+              <span>Belegt</span>
+              <strong>${bookedCount} / ${capacity}</strong>
+            </div>
+            <div class="capacity-bar" aria-hidden="true">
+              <div class="capacity-fill" style="--capacity-width: ${usage}%"></div>
+            </div>
+            <div class="capacity-meta">
+              <span class="pill ${isFull ? "full" : "active"}">${isFull ? "Grenze erreicht" : `${Math.max(capacity - bookedCount, 0)} frei`}</span>
+              <span class="pill waitlist">${waitlistCount} Warteliste</span>
+            </div>
+            <div class="actions">
+              <button type="button" data-save="${date.id}">Speichern</button>
+              <button type="button" class="ghost" data-toggle="${date.id}" data-active="${date.active ? "false" : "true"}">${date.active ? "Ausblenden" : "Einblenden"}</button>
+              <button type="button" class="danger" data-delete="${date.id}" data-label="${date.label}">Löschen</button>
+            </div>
+          </div>
         `;
-        datesTable.append(row);
+        datesTable.append(card);
       });
     };
 
@@ -470,10 +539,13 @@
 
     document.querySelector("#dateForm").addEventListener("submit", async (event) => {
       event.preventDefault();
-      const button = event.submitter;
-      const data = Object.fromEntries(new FormData(event.currentTarget));
-      button.disabled = true;
-      button.textContent = "Speichert...";
+      const form = event.currentTarget;
+      const button = event.submitter || form.querySelector("button[type=\"submit\"]");
+      const data = Object.fromEntries(new FormData(form));
+      if (button) {
+        button.disabled = true;
+        button.textContent = "Speichert...";
+      }
 
       try {
         await requestAdmin({
@@ -482,15 +554,20 @@
           time: data.time,
           capacity: Number(data.capacity || 8)
         });
-        event.currentTarget.reset();
-        document.querySelector("#capacity").value = 8;
+        form.reset();
+        const capacityInput = document.querySelector("#capacity");
+        if (capacityInput) {
+          capacityInput.value = 8;
+        }
         showStatus("Termin wurde hinzugefügt und ist jetzt auf der Landingpage sichtbar.");
         await loadDates();
       } catch (error) {
         showStatus(error.message, "bad");
       } finally {
-        button.disabled = false;
-        button.textContent = "Termin hinzufügen";
+        if (button) {
+          button.disabled = false;
+          button.textContent = "Termin hinzufügen";
+        }
       }
     });
 
