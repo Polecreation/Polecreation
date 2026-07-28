@@ -1018,7 +1018,7 @@
           <aside class="video-card" aria-label="Willkommensvideo">
             <div class="video-frame">
               <video controls playsinline preload="metadata" poster="assets/polecreation-einzelperson.jpg">
-                <source src="https://hfwkoqfuvmavvxsxnlcq.supabase.co/storage/v1/object/public/Public-assets/Anja%20Polecreation.mp4" type="video/mp4">
+                <source src="assets/anja-polecreation.mp4" type="video/mp4">
                 Dein Browser kann dieses Video nicht abspielen.
               </video>
             </div>
@@ -1248,6 +1248,7 @@
 
   <script>
     const BOOKING_FUNCTION_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/bright-function";
+    const TRIAL_DATES_FUNCTION_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/manage-trial-dates";
     const SUPABASE_REST_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/rest/v1";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_KXNvsTotuvo0kxhqGc4HKA_Pu5QH3lT";
     const FALLBACK_APPOINTMENTS = [
@@ -1269,19 +1270,31 @@
       return `${match[3]}-${match[2]}-${match[1]}`;
     };
 
+    const normalizeAppointmentOption = (appointment) => {
+      if (typeof appointment === "string") {
+        return { label: appointment, is_waitlist: false };
+      }
+      return {
+        label: appointment.label,
+        is_waitlist: appointment.is_waitlist === true
+      };
+    };
+
     const setAppointmentOptions = (appointments) => {
+      const normalizedAppointments = appointments.map(normalizeAppointmentOption).filter((appointment) => appointment.label);
+
       document.querySelectorAll("[data-dynamic-appointments]").forEach((select) => {
         const selectedValue = select.value;
         select.innerHTML = '<option value="">Bitte auswählen</option>';
 
-        appointments.forEach((appointment) => {
+        normalizedAppointments.forEach((appointment) => {
           const option = document.createElement("option");
-          option.value = appointment;
-          option.textContent = appointment;
+          option.value = appointment.label;
+          option.textContent = appointment.is_waitlist ? `${appointment.label} (Warteliste)` : appointment.label;
           select.append(option);
         });
 
-        if (appointments.includes(selectedValue)) {
+        if (normalizedAppointments.some((appointment) => appointment.label === selectedValue)) {
           select.value = selectedValue;
         }
       });
@@ -1291,22 +1304,20 @@
       const todayIso = getTodayIsoDate();
 
       try {
-        const response = await fetch(
-          `${SUPABASE_REST_URL}/trial_dates?select=label,date&active=eq.true&date=gte.${todayIso}&order=sort_order.asc,date.asc,time.asc`,
-          {
-            headers: {
-              "apikey": SUPABASE_PUBLISHABLE_KEY,
-              "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
-            }
-          }
-        );
+        const response = await fetch(TRIAL_DATES_FUNCTION_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ action: "public-list" })
+        });
 
         if (!response.ok) {
           throw new Error("Termine konnten nicht geladen werden.");
         }
 
-        const rows = await response.json();
-        const appointments = rows.map((row) => row.label).filter(Boolean);
+        const result = await response.json();
+        const appointments = Array.isArray(result.dates) ? result.dates : [];
         setAppointmentOptions(appointments.length ? appointments : FALLBACK_APPOINTMENTS.filter((label) => appointmentDateFromLabel(label) >= todayIso));
       } catch (error) {
         console.warn(error);

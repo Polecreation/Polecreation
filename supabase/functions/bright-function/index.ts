@@ -5,6 +5,8 @@ const corsHeaders = {
   "Access-Control-Max-Age": "86400"
 };
 
+const MAX_WAITLIST_SPOTS = 5;
+
 type BookingLead = {
   first_name: string;
   last_name: string;
@@ -221,21 +223,27 @@ const getBookingMode = async (
   );
 
   if (!dates.length) {
-    return { isWaitlist: false, capacity: null, bookedCount: 0 };
+    return { isWaitlist: false, isSoldOut: false, capacity: null, bookedCount: 0, waitlistCount: 0 };
   }
 
   const trialDate = dates[0];
   const existingLeads = await supabaseJsonRequest<ExistingLeadRow[]>(
     supabaseUrl,
     serviceRoleKey,
-    `probetraining_leads?select=id,status&appointment=eq.${encodedAppointment}&status=neq.waitlist&status=neq.cancelled`
+    `probetraining_leads?select=id,status&appointment=eq.${encodedAppointment}&status=neq.cancelled`
   );
 
-  const bookedCount = existingLeads.length;
+  const capacity = Number(trialDate.capacity || 0);
+  const bookedCount = existingLeads.filter((lead) => lead.status !== "waitlist").length;
+  const waitlistCount = existingLeads.filter((lead) => lead.status === "waitlist").length;
+  const isWaitlist = bookedCount >= capacity;
+
   return {
-    isWaitlist: bookedCount >= Number(trialDate.capacity || 0),
-    capacity: Number(trialDate.capacity || 0),
-    bookedCount
+    isWaitlist,
+    isSoldOut: isWaitlist && waitlistCount >= MAX_WAITLIST_SPOTS,
+    capacity,
+    bookedCount,
+    waitlistCount
   };
 };
 
@@ -340,6 +348,10 @@ Deno.serve(async (request) => {
     validateLead(lead);
 
     const bookingMode = await getBookingMode(supabaseUrl, serviceRoleKey, lead.appointment);
+    if (bookingMode.isSoldOut) {
+      throw new PublicError("Dieser Termin ist bereits ausgebucht und die Warteliste ist voll. Bitte wähle einen anderen Termin oder melde dich direkt bei PoleCreation.", 409);
+    }
+
     const leadStatus = bookingMode.isWaitlist ? "waitlist" : "new";
 
     const insertResponse = await fetch(`${supabaseUrl}/rest/v1/probetraining_leads`, {
@@ -456,7 +468,8 @@ Deno.serve(async (request) => {
             <strong>Telefon:</strong> ${phone}<br>
             <strong>Geburtsdatum:</strong> ${birthdate}<br>
             <strong>Termin:</strong> ${appointment}<br>
-            <strong>Plätze:</strong> ${bookingMode.bookedCount}${bookingMode.capacity ? ` / ${bookingMode.capacity}` : ""}
+            <strong>Plätze:</strong> ${bookingMode.bookedCount}${bookingMode.capacity ? ` / ${bookingMode.capacity}` : ""}<br>
+            <strong>Warteliste:</strong> ${bookingMode.waitlistCount} / ${MAX_WAITLIST_SPOTS}
           </p>
         `,
         replyTo: lead.email

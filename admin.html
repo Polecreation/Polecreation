@@ -414,6 +414,7 @@
 
   <script>
     const ADMIN_FUNCTION_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/manage-trial-dates";
+    const MAX_WAITLIST_SPOTS = 5;
     const passwordInput = document.querySelector("#adminPassword");
     const statusBox = document.querySelector("#status");
     const datesTable = document.querySelector("#datesTable");
@@ -475,6 +476,7 @@
         const waitlistCount = Number(date.waitlist_count || 0);
         const capacity = Number(date.capacity || 0);
         const isFull = capacity > 0 && bookedCount >= capacity;
+        const isSoldOut = date.is_sold_out === true || (isFull && waitlistCount >= MAX_WAITLIST_SPOTS);
         const isPast = date.date < todayIso;
         const usage = capacity > 0 ? Math.min(100, Math.round((bookedCount / capacity) * 100)) : 0;
         const card = document.createElement("article");
@@ -486,7 +488,7 @@
             <div class="date-meta">
               <span class="pill ${date.active ? "active" : "inactive"}">${date.active ? "Sichtbar" : "Ausgeblendet"}</span>
               ${isPast ? '<span class="pill past">Vergangen</span>' : ""}
-              ${isFull ? '<span class="pill full">Voll</span>' : ""}
+              ${isSoldOut ? '<span class="pill full">Ausgebucht</span>' : isFull ? '<span class="pill waitlist">Nur Warteliste</span>' : ""}
               ${waitlistCount ? '<span class="pill waitlist">Warteliste aktiv</span>' : ""}
             </div>
           </div>
@@ -506,8 +508,8 @@
               <div class="capacity-fill" style="--capacity-width: ${usage}%"></div>
             </div>
             <div class="capacity-meta">
-              <span class="pill ${isFull ? "full" : "active"}">${isFull ? "Grenze erreicht" : `${Math.max(capacity - bookedCount, 0)} frei`}</span>
-              <span class="pill waitlist">${waitlistCount} Warteliste</span>
+              <span class="pill ${isSoldOut ? "full" : isFull ? "waitlist" : "active"}">${isSoldOut ? "Ausgebucht" : isFull ? "Nur Warteliste" : `${Math.max(capacity - bookedCount, 0)} frei`}</span>
+              <span class="pill waitlist">${waitlistCount} / ${MAX_WAITLIST_SPOTS} Warteliste</span>
             </div>
             <div class="actions">
               <button type="button" data-save="${date.id}">Speichern</button>
