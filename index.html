@@ -1300,6 +1300,28 @@
       });
     };
 
+    const getStaticFallbackAppointments = (todayIso) =>
+      FALLBACK_APPOINTMENTS.filter((label) => appointmentDateFromLabel(label) >= todayIso);
+
+    const loadAppointmentsFromRest = async (todayIso) => {
+      const response = await fetch(
+        `${SUPABASE_REST_URL}/trial_dates?select=label,date&active=eq.true&date=gte.${todayIso}&order=sort_order.asc,date.asc,time.asc`,
+        {
+          headers: {
+            "apikey": SUPABASE_PUBLISHABLE_KEY,
+            "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Termine konnten nicht direkt geladen werden.");
+      }
+
+      const rows = await response.json();
+      return rows.map((row) => row.label).filter(Boolean);
+    };
+
     const loadAppointments = async () => {
       const todayIso = getTodayIsoDate();
 
@@ -1313,15 +1335,22 @@
         });
 
         if (!response.ok) {
-          throw new Error("Termine konnten nicht geladen werden.");
+          throw new Error("Termine konnten nicht über die Function geladen werden.");
         }
 
         const result = await response.json();
         const appointments = Array.isArray(result.dates) ? result.dates : [];
-        setAppointmentOptions(appointments.length ? appointments : FALLBACK_APPOINTMENTS.filter((label) => appointmentDateFromLabel(label) >= todayIso));
-      } catch (error) {
-        console.warn(error);
-        setAppointmentOptions(FALLBACK_APPOINTMENTS.filter((label) => appointmentDateFromLabel(label) >= todayIso));
+        setAppointmentOptions(appointments);
+      } catch (functionError) {
+        console.warn(functionError);
+
+        try {
+          const restAppointments = await loadAppointmentsFromRest(todayIso);
+          setAppointmentOptions(restAppointments.length ? restAppointments : getStaticFallbackAppointments(todayIso));
+        } catch (restError) {
+          console.warn(restError);
+          setAppointmentOptions(getStaticFallbackAppointments(todayIso));
+        }
       }
     };
 
