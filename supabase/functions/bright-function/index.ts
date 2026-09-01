@@ -17,6 +17,7 @@ type BookingLead = {
   whatsapp_consent: boolean;
   privacy_consent: boolean;
   source?: string;
+  bot_field?: string;
 };
 
 type LeadStatusPatch = {
@@ -32,6 +33,7 @@ type TrialDateRow = {
   label: string;
   capacity: number;
   active: boolean;
+  date: string;
 };
 
 type ExistingLeadRow = {
@@ -100,6 +102,11 @@ const readString = (value: unknown) => (typeof value === "string" ? value.trim()
 
 const normalizeBirthdate = (value: unknown) => {
   const raw = readString(value);
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    return raw;
+  }
+
   const digits = raw.replace(/\D/g, "");
 
   if (digits.length === 8) {
@@ -135,7 +142,8 @@ const normalizeLead = (input: Partial<Record<keyof BookingLead, unknown>>): Book
     input.privacy_consent === true ||
     input.privacy_consent === "true" ||
     input.privacy_consent === "on",
-  source: readString(input.source) || "landingpage"
+  source: readString(input.source) || "landingpage",
+  bot_field: readString(input.bot_field)
 });
 
 const isValidDateInput = (value: string) => {
@@ -219,14 +227,19 @@ const getBookingMode = async (
   const dates = await supabaseJsonRequest<TrialDateRow[]>(
     supabaseUrl,
     serviceRoleKey,
-    `trial_dates?select=label,capacity,active&label=eq.${encodedAppointment}&active=eq.true&limit=1`
+    `trial_dates?select=label,capacity,active,date&label=eq.${encodedAppointment}&active=eq.true&limit=1`
   );
 
   if (!dates.length) {
-    return { isWaitlist: false, isSoldOut: false, capacity: null, bookedCount: 0, waitlistCount: 0 };
+    throw new PublicError("Dieser Termin ist nicht mehr buchbar. Bitte wähle einen aktuellen Termin aus.", 409);
   }
 
   const trialDate = dates[0];
+  const todayIso = new Date().toISOString().slice(0, 10);
+
+  if (trialDate.date < todayIso) {
+    throw new PublicError("Dieser Termin liegt bereits in der Vergangenheit. Bitte wähle einen aktuellen Termin aus.", 409);
+  }
   const existingLeads = await supabaseJsonRequest<ExistingLeadRow[]>(
     supabaseUrl,
     serviceRoleKey,
@@ -346,6 +359,13 @@ Deno.serve(async (request) => {
 
     const lead = normalizeLead(await request.json());
     validateLead(lead);
+
+    if (lead.bot_field) {
+      return jsonResponse({
+        ok: true,
+        message: "Danke! Deine Anfrage wurde gespeichert. Du erhältst gleich eine Bestätigung per E-Mail."
+      });
+    }
 
     const bookingMode = await getBookingMode(supabaseUrl, serviceRoleKey, lead.appointment);
     if (bookingMode.isSoldOut) {

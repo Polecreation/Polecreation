@@ -531,6 +531,14 @@
       grid-column: 1 / -1;
     }
 
+    .booking-honeypot {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
     label {
       color: var(--berry);
       font-weight: 800;
@@ -1186,9 +1194,11 @@
                 <label for="appointment">Wunschtermin</label>
                 <select id="appointment" name="appointment" required data-dynamic-appointments>
                   <option value="">Termine werden geladen...</option>
-                  <option value="Montag, 13.07.2026 - 16:30 Uhr">Montag, 13.07.2026 - 16:30 Uhr</option>
-                  <option value="Samstag, 25.07.2026 - 17:00 Uhr">Samstag, 25.07.2026 - 17:00 Uhr</option>
                 </select>
+              </div>
+              <div class="field full booking-honeypot" aria-hidden="true">
+                <label for="website">Website</label>
+                <input id="website" name="website" tabindex="-1" autocomplete="off">
               </div>
               <label class="check field full">
                 <input type="checkbox" name="whatsappConsent" required>
@@ -1251,10 +1261,7 @@
     const TRIAL_DATES_FUNCTION_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/functions/v1/manage-trial-dates";
     const SUPABASE_REST_URL = "https://hfwkoqfuvmavvxsxnlcq.supabase.co/rest/v1";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_KXNvsTotuvo0kxhqGc4HKA_Pu5QH3lT";
-    const FALLBACK_APPOINTMENTS = [
-      "Montag, 13.07.2026 - 16:30 Uhr",
-      "Samstag, 25.07.2026 - 17:00 Uhr"
-    ];
+    const FALLBACK_APPOINTMENTS = [];
 
     const getTodayIsoDate = () => {
       const today = new Date();
@@ -1395,6 +1402,7 @@
           appointment: data.appointment,
           whatsapp_consent: data.whatsappConsent === "on",
           privacy_consent: data.privacyConsent === "on",
+          bot_field: data.website || "",
           source: "landingpage"
         };
 

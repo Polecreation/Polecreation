@@ -33,11 +33,8 @@ alter table public.probetraining_leads enable row level security;
 drop policy if exists "Allow anonymous insert from landingpage"
 on public.probetraining_leads;
 
-create policy "Allow anonymous insert from landingpage"
-on public.probetraining_leads
-for insert
-to anon
-with check (true);
+-- Leads are written by the Edge Function with the service role.
+-- Anonymous direct inserts stay disabled to reduce spam and bypass attempts.
 
 create index if not exists probetraining_leads_created_at_idx
 on public.probetraining_leads (created_at desc);
@@ -78,17 +75,8 @@ for select
 to anon
 using (active = true);
 
-insert into public.trial_dates (date, time, label, capacity, active, sort_order)
-values
-  ('2026-07-13', '16:30', 'Montag, 13.07.2026 - 16:30 Uhr', 8, true, 202607131630),
-  ('2026-07-25', '17:00', 'Samstag, 25.07.2026 - 17:00 Uhr', 8, true, 202607251700)
-on conflict (date, time) do update
-set
-  label = excluded.label,
-  capacity = excluded.capacity,
-  active = excluded.active,
-  sort_order = excluded.sort_order,
-  updated_at = now();
+-- Termine werden im Adminbereich gepflegt.
+-- Keine festen Termine seeden, damit alte Probetrainingstage nicht wieder aktiv werden.
 
 create index if not exists trial_dates_active_sort_idx
 on public.trial_dates (active desc, sort_order asc, date asc, time asc);
